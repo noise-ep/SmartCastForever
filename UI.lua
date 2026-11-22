@@ -389,7 +389,7 @@ function ns.RefreshWindow()
         local row = rows[r]
         local any = false
         for i = 0, 11 do
-            if GetActionInfo(bar.first + i) then any = true break end
+            if ns.Plan(bar.first + i) then any = true break end
         end
         if any or r == 1 then
             shown = shown + 1

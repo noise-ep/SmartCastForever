@@ -180,6 +180,7 @@ end
 
 -- Everything SmartCast decides about one button
 function ns.Plan(slot)
+    if ns.demoMode then return ns.demo and ns.demo[slot] end
     local db = ns.char
     local s = ns.ReadSlot(slot)
     if not s then return nil end
@@ -381,7 +382,7 @@ end
 -- learned later counts as an upgrade, not as a question. Older ranks follow the
 -- "older ranks" setting; with "ask" they wait for you. Returns how many still wait.
 function ns.ResolveRanks()
-    if not ns.char then return 0 end
+    if not ns.char or ns.demoMode then return 0 end
     local waiting = 0
     for slot = 1, ns.MAX_SLOT do
         local p = ns.Plan(slot)
@@ -419,6 +420,12 @@ function ns.DecideAll(list, keep)
 end
 
 function ns.DecideSlot(slot, keep)
+    if ns.demoMode then
+        local d = ns.demo[slot]
+        if d then d.needsDecision, d.decided = false, true; if keep then d.fixedRank = d.rank end end
+        ns.Changed()
+        return
+    end
     local p = ns.Plan(slot)
     if p and p.name then Decide(slot, p.name, keep and p.rank or nil) end
     ns.Changed()
@@ -427,7 +434,7 @@ end
 -- plain spells on the bars that should follow the highest rank: put the new rank there
 local upgradePending
 function ns.Upgrade(quiet)
-    if not (ns.char and ns.char.autoUpgrade) then return 0 end
+    if not (ns.char and ns.char.autoUpgrade) or ns.demoMode then return 0 end
     if InCombatLockdown() then upgradePending = true return 0 end
     local done, perSpell = 0, {}
     for slot = 1, ns.MAX_SLOT do
@@ -463,6 +470,7 @@ StaticPopupDialogs["SMARTCASTFOREVER_OLD_RANKS"] = {
 }
 
 function ns.Apply()
+    if ns.demoMode then Say(L["Demo mode: your bars are not changed. /scf demo to leave it."]) return end
     if InCombatLockdown() then
         pending = "apply"
         print("|cff66ccffSmartCast:|r " .. L["In combat: it will run when combat ends."])
@@ -506,6 +514,7 @@ function ns.Apply()
 end
 
 function ns.Undo()
+    if ns.demoMode then Say(L["Demo mode: your bars are not changed. /scf demo to leave it."]) return end
     if InCombatLockdown() then
         pending = "undo"
         print("|cff66ccffSmartCast:|r " .. L["In combat: it will run when combat ends."])
@@ -540,6 +549,22 @@ end
 
 -- settings for one button
 function ns.SetSlot(slot, key, value)
+    if ns.demoMode then
+        local d = ns.demo[slot]
+        if not (d and d.name) then return end
+        if key == "mode" then
+            d.mode = value
+            d.template = value == "default" and (ns.char.defaults[d.kind] or "skip") or value
+            d.state = d.template == "skip" and "skip" or d.state == "skip" and "pending" or d.state
+        elseif key == "rank" then
+            d.fixedRank = value
+        elseif key == "shiftSelf" then
+            d.shiftSelf = value
+        end
+        d.body = d.template ~= "skip" and ns.Body(d) or nil
+        ns.Changed()
+        return
+    end
     local p = ns.Plan(slot)
     if not (p and p.name) then return end
     local o = ns.char.slots[slot]
@@ -550,6 +575,110 @@ function ns.SetSlot(slot, key, value)
     o[key] = value
     if key == "rank" then o.rankDecided = true end
     Changed()
+end
+
+---------------------------------------------------------------------------
+-- Demo: a tidy, made-up set of buttons built from your own spells, for screenshots.
+-- Your bars are not read or changed while it is on; Apply and Undo do nothing.
+---------------------------------------------------------------------------
+local function BookSpells()
+    local list, byName = {}, {}
+    local book = C_SpellBook
+    local bank = Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player
+    if not (book and book.GetNumSpellBookSkillLines and bank) then return list end
+    for line = 1, (Try(book.GetNumSpellBookSkillLines) or 0) do
+        local info = Try(book.GetSpellBookSkillLineInfo, line)
+        if info and not info.isGuild and info.itemIndexOffset and info.numSpellBookItems then
+            for i = info.itemIndexOffset + 1, info.itemIndexOffset + info.numSpellBookItems do
+                local item = Try(book.GetSpellBookItemInfo, i, bank)
+                local id = item and (item.actionID or item.spellID)
+                if id and item.name and not item.isPassive then
+                    local n = tonumber((item.subName or ""):match("%d+")) or 0
+                    local e = byName[item.name]
+                    if not e then
+                        e = { name = item.name }
+                        byName[item.name] = e
+                        list[#list + 1] = e
+                    end
+                    if not e.n or n > e.n then
+                        e.id, e.n = id, n
+                        e.rank = n > 0 and item.subName or nil
+                    end
+                end
+            end
+        end
+    end
+    return list
+end
+
+local function DemoPlan(slot, e, template, state)
+    local kind = ns.SpellKind(e.id)
+    local p = {
+        slot = slot, current = state == "converted" and "ours" or "spell",
+        id = e.id, name = e.name, kind = kind, icon = ns.SpellIcon(e.id), rank = e.rank,
+        mode = "default", template = template, noToggle = ns.char.noToggle and true or false,
+        shiftSelf = false, state = state, decided = true, needsDecision = false,
+    }
+    if template ~= (ns.char.defaults[kind] or "skip") then p.mode = template end
+    if template ~= "skip" then p.body = ns.Body(p) end
+    return p
+end
+
+local function ItemIcon(id)
+    return Try(C_Item and C_Item.GetItemIconByID, id) or Try(GetItemIcon, id)
+end
+
+function ns.BuildDemo()
+    local harm, help, other = {}, {}, {}
+    for _, e in ipairs(BookSpells()) do
+        local kind = ns.SpellKind(e.id)
+        local t = kind == "harmful" and harm or kind == "helpful" and help or other
+        t[#t + 1] = e
+    end
+    local demo = {}
+    -- Action Bar 1: damage spells, converted; the last two still pending, one of
+    -- them with an older rank waiting for your choice
+    for i = 1, math.min(#harm, 10) do
+        local e = harm[i]
+        local p = DemoPlan(i, e, "enemyAssist", i <= math.min(#harm, 10) - 2 and "converted" or "pending")
+        if p.state == "pending" and e.n and e.n > 1 and not demo.older then
+            demo.older = true
+            p.best = { rank = e.rank }
+            p.rank = (e.rank:gsub("%d+", "1", 1))
+            p.outdated, p.needsDecision, p.decided = true, true, false
+        end
+        demo[i] = p
+    end
+    -- Action Bar 2: helping spells, the first ones on "friend, else my enemy's target"
+    for i = 1, math.min(#help, 10) do
+        demo[60 + i] = DemoPlan(60 + i, help[i], i <= 3 and "friendAssist" or "skip", i <= 3 and "converted" or "skip")
+    end
+    -- Action Bar 3: everything else, left alone, plus a couple of items SmartCast ignores
+    local n = 0
+    for i = 1, math.min(#other, 8) do
+        n = 48 + i
+        demo[n] = DemoPlan(n, other[i], "skip", "skip")
+    end
+    for _, item in ipairs({ 6948, 159 }) do
+        n = n + 1
+        if n > 60 then break end
+        demo[n] = { slot = n, current = "foreign", icon = ItemIcon(item) }
+    end
+    demo.older = nil
+    ns.demo = demo
+end
+
+function ns.ToggleDemo()
+    if ns.demoMode then
+        ns.demoMode, ns.demo = nil, nil
+        Say(L["Demo mode off: showing your real bars again."])
+    else
+        ns.BuildDemo()
+        ns.demoMode = true
+        Say(L["Demo mode: your bars are not changed. /scf demo to leave it."])
+    end
+    if ns.ShowSlot then ns.ShowSlot(nil) end
+    ns.Changed()
 end
 
 ---------------------------------------------------------------------------
@@ -627,6 +756,7 @@ SlashCmdList.SMARTCASTFOREVER = function(msg)
     msg = (msg or ""):lower():match("^%s*(.-)%s*$")
     if msg == "apply" then ns.Apply()
     elseif msg == "undo" then ns.Undo()
+    elseif msg == "demo" then ns.ToggleDemo()
     elseif msg == "help" then print("|cff66ccffSmartCast:|r " .. L["Commands: /scf (window), /scf apply, /scf undo"])
     elseif ns.ToggleWindow then ns.ToggleWindow() end
 end
