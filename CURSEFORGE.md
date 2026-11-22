@@ -37,7 +37,7 @@ Set a **default rule** for harmful, helpful and other spells, then change single
 - `/scf`: open the window (or left-click the minimap button)
 - `/scf apply`: apply (or right-click the minimap button)
 - `/scf undo`: undo all (or Shift + right-click the minimap button)
-- `/scf demo`: a preview with example buttons made from your own spells, to try the window and see what each rule does. It is only a preview: nothing on your bars changes, and Apply and Undo do nothing while it is on. Type `/scf demo` again to go back.
+- `/scf demo`: preview with example buttons (changes nothing)
 
 ## Languages
 
