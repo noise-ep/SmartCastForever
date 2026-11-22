@@ -1,0 +1,13 @@
+## Interface: 16001
+## Title: SmartCast Forever
+## Notes: Turns the spells on your action bars into smart macros (enemy or your friend's target, mouseover, self...) in place, and back again.
+## Version: 0.1.0
+## Author: SmartCast Forever
+## IconTexture: Interface\Icons\Ability_Marksmanship
+## SavedVariables: SmartCastForeverDB
+## SavedVariablesPerCharacter: SmartCastForeverCharDB
+
+Locales.lua
+Core.lua
+UI.lua
+Minimap.lua
