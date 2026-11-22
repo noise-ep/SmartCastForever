@@ -11,5 +11,5 @@ First release.
 - Older ranks on your bars: detected, with a choice to use the highest or keep them. Plain spells on your bars can follow new ranks by themselves.
 - Options: don't cancel a spell that is already active (`!`), Shift to cast on yourself, hide macro names on the buttons.
 - Undo all: puts the original spells back and deletes SmartCast's macros. Never touches macros you made.
-- Waits for the end of combat. Minimap button. Demo mode (`/scf demo`) for screenshots.
+- Waits for the end of combat. Minimap button. Preview mode (`/scf demo`): example buttons from your own spells; your bars are not changed.
 - English, Español, Deutsch, Français, Italiano, Português, Русский, 한국어, 简体中文, 繁體中文.
