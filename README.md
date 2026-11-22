@@ -13,6 +13,10 @@ Turns the spells on your action bars into smart macros, in the same buttons, and
 
 Settings are saved per character. Macros are character macros.
 
+## Support
+
+If SmartCast saves you some wasted casts, you can [buy me a coffee](https://ko-fi.com/noise_ep). Totally optional: it is and stays free. ☕
+
 ## License
 
 MIT, see [LICENSE](LICENSE).

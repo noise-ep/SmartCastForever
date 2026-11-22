@@ -50,6 +50,8 @@ English, Español, Deutsch, Français, Italiano, Português, Русский, 한
 
 Source code and issues: [github.com/noise-ep/SmartCastForever](https://github.com/noise-ep/SmartCastForever)
 
+If SmartCast saves you some wasted casts, you can [buy me a coffee](https://ko-fi.com/noise_ep). Totally optional: it is and stays free. ☕
+
 ---
 
 ## Español
