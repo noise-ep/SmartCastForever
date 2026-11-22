@@ -3,12 +3,19 @@ local _, ns = ...
 local L = ns.L
 
 local button
-local RADIUS = 80
+
+-- on the minimap's rim, like other minimap buttons: half its width plus a little,
+-- so the button sits outside the map whatever size the minimap has
+local function Radius()
+    local w = Minimap:GetWidth() or 140
+    return w / 2 + 5
+end
 
 local function Place()
     local angle = math.rad(ns.db.minimapAngle or 200)
     button:ClearAllPoints()
-    button:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * RADIUS, math.sin(angle) * RADIUS)
+    local r = Radius()
+    button:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * r, math.sin(angle) * r)
 end
 
 local function Drag()
@@ -70,6 +77,7 @@ function ns.CreateMinimapButton()
     button:SetScript("OnEnter", Tooltip)
     button:SetScript("OnLeave", function() GameTooltip:Hide() end)
     Place()
+    Minimap:HookScript("OnSizeChanged", function() if button then Place() end end)
     button:SetShown(not ns.db.minimapHidden)
 end
 
