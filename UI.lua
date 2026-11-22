@@ -98,8 +98,14 @@ local function ShowTooltip(button)
     elseif not p.name then
         GameTooltip:SetText(L["Not a spell: SmartCast leaves it alone."], 1, 1, 1, 1, true)
     else
-        GameTooltip:SetText(p.name .. (p.rank and ("  |cff999999" .. p.rank .. "|r") or ""))
-        GameTooltip:AddLine(ns.TEMPLATE_NAMES[p.template] or "", 1, 1, 1)
+        -- the game's own spell tooltip (icon, cost, description), then SmartCast's lines
+        local ok = GameTooltip.SetSpellByID and pcall(GameTooltip.SetSpellByID, GameTooltip, p.fixedRank and p.id or p.id)
+        if not ok then
+            GameTooltip:SetText(p.name .. (p.rank and ("  |cff999999" .. p.rank .. "|r") or ""))
+        end
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine("|cff66ccffSmartCast:|r " .. (ns.TEMPLATE_NAMES[p.template] or ""), 1, 1, 1)
+        if p.fixedRank then GameTooltip:AddLine(L["Rank"] .. ": " .. p.fixedRank, 1, 1, 1) end
         local c = COLORS[p.state] or COLORS.skip
         GameTooltip:AddLine(STATE_TEXT[p.state] or "", c[1], c[2], c[3])
     end
@@ -244,7 +250,13 @@ local function Build()
             local list = { { "MAX", L["Highest known"] } }
             local p = selected and ns.Plan(selected)
             if p and p.name then
-                for _, r in ipairs(ns.KnownRanks(p.name)) do list[#list + 1] = { r.rank, r.rank } end
+                local seen = {}
+                for _, r in ipairs(ns.KnownRanks(p.name)) do
+                    list[#list + 1] = { r.rank, r.rank }
+                    seen[r.rank] = true
+                end
+                -- the rank on the button is always offered, so it can be kept as it is
+                if p.rank and not seen[p.rank] then list[#list + 1] = { p.rank, p.rank } end
             end
             return list
         end,

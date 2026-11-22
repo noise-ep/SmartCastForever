@@ -207,7 +207,9 @@ function ns.Body(p)
     local cond = Conditions(p.template, p.kind)
     if p.shiftSelf and p.template ~= "self" then cond = "[mod:shift,@player]" .. cond end
     local spell = p.name .. (p.fixedRank and ("(" .. p.fixedRank .. ")") or "")
-    return ("#showtooltip\n/cast %s %s%s"):format(cond, p.noToggle and "!" or "", spell)
+    -- the spell named in #showtooltip: the button keeps its icon and tooltip even when
+    -- no condition matches (no target yet), instead of a question mark
+    return ("#showtooltip %s\n/cast %s %s%s"):format(spell, cond, p.noToggle and "!" or "", spell)
 end
 
 ---------------------------------------------------------------------------
