@@ -11,6 +11,7 @@ if locale ~= "esES" and locale ~= "esMX" then return end
 L["Enemy, or my friend's target"] = "Enemigo, o el objetivo de mi aliado"
 L["Mouseover, else target"] = "Ratón encima, si no el objetivo"
 L["Friend, else myself"] = "Aliado, si no yo mismo"
+L["Friend, else my enemy's target, else myself"] = "Aliado, si no el objetivo de mi enemigo, si no yo"
 L["Always myself"] = "Siempre yo mismo"
 L["Don't touch"] = "No tocar"
 L["Default (%s)"] = "Por defecto (%s)"

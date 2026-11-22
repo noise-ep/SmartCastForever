@@ -9,11 +9,12 @@ local QUESTION_ICON = 134400  -- with #showtooltip the button shows the spell's 
 ---------------------------------------------------------------------------
 -- Templates: where the spell goes
 ---------------------------------------------------------------------------
-ns.TEMPLATES = { "enemyAssist", "mouseover", "friendSelf", "self" }
+ns.TEMPLATES = { "enemyAssist", "mouseover", "friendSelf", "friendAssist", "self" }
 ns.TEMPLATE_NAMES = {
     enemyAssist = L["Enemy, or my friend's target"],
     mouseover = L["Mouseover, else target"],
     friendSelf = L["Friend, else myself"],
+    friendAssist = L["Friend, else my enemy's target, else myself"],
     self = L["Always myself"],
     skip = L["Don't touch"],
 }
@@ -26,6 +27,9 @@ local function Conditions(template, kind)
         return ("[@mouseover,%s,nodead][]"):format(who)
     elseif template == "friendSelf" then
         return "[@target,help,nodead][@player]"
+    elseif template == "friendAssist" then
+        -- the mirror of enemyAssist: an enemy selected by mistake heals whoever it is hitting
+        return "[@target,help,nodead][@targettarget,help,nodead][@player]"
     elseif template == "self" then
         return "[@player]"
     end
