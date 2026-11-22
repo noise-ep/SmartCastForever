@@ -8,12 +8,12 @@ ns.L = L
 local T = {}
 
 T.esES = {
-    ["Stop casting"] = "Cortar",
+    ["Stop casting"] = "Cortar lanzamiento",
     ["Don't stop"] = "No cortar",
     ["Stop channels"] = "Cortar canalizaciones",
-    ["Stop current cast"] = "Cortar lo actual",
+    ["Stop everything"] = "Cortar todo",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Cortar canalizaciones: corta un hechizo canalizado (Proyectiles Arcanos, Ventisca...), nunca este mismo hechizo.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Cortar lo actual: corta cualquier cosa, también el disparo de la varita. Si lo pulsas dos veces, este hechizo vuelve a empezar.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Cortar todo: corta cualquier cosa, también el disparo de la varita. Si lo pulsas dos veces, este hechizo vuelve a empezar.",
     ["When it cuts a cast, the new spell may need a second press."] = "Al cortar un lanzamiento, el nuevo hechizo puede necesitar una segunda pulsación.",
     ["Enemy, or my friend's target"] = "Enemigo, o el objetivo de mi aliado",
     ["Mouseover, else target"] = "Ratón encima, si no el objetivo",
@@ -78,12 +78,12 @@ T.esES = {
 T.esMX = T.esES
 
 T.deDE = {
-    ["Stop casting"] = "Abbrechen",
+    ["Stop casting"] = "Zauber abbrechen",
     ["Don't stop"] = "Nicht abbrechen",
     ["Stop channels"] = "Kanalisierungen abbrechen",
-    ["Stop current cast"] = "Aktuellen Zauber abbrechen",
+    ["Stop everything"] = "Alles abbrechen",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Kanalisierungen abbrechen: bricht einen kanalisierten Zauber ab (Arkane Geschosse, Blizzard...), nie diesen Zauber selbst.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Aktuellen Zauber abbrechen: bricht alles ab, auch einen Zauberstabschuss. Zweimal drücken startet diesen Zauber neu.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Alles abbrechen: bricht alles ab, auch einen Zauberstabschuss. Zweimal drücken startet diesen Zauber neu.",
     ["When it cuts a cast, the new spell may need a second press."] = "Wird ein Zauber abgebrochen, braucht der neue Zauber eventuell einen zweiten Druck.",
     ["Enemy, or my friend's target"] = "Feind oder Ziel des Verbündeten",
     ["Mouseover, else target"] = "Mouseover, sonst Ziel",
@@ -147,12 +147,12 @@ T.deDE = {
 }
 
 T.frFR = {
-    ["Stop casting"] = "Interrompre",
+    ["Stop casting"] = "Interrompre le sort",
     ["Don't stop"] = "Ne pas interrompre",
     ["Stop channels"] = "Interrompre les canalisations",
-    ["Stop current cast"] = "Interrompre le sort en cours",
+    ["Stop everything"] = "Tout interrompre",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Interrompre les canalisations : coupe un sort canalisé (Projectiles des arcanes, Blizzard...), jamais ce sort lui-même.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interrompre le sort en cours : coupe tout, un tir de baguette aussi. Appuyer deux fois relance ce sort.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Tout interrompre : coupe tout, un tir de baguette aussi. Appuyer deux fois relance ce sort.",
     ["When it cuts a cast, the new spell may need a second press."] = "Quand une incantation est coupée, le nouveau sort peut demander un second appui.",
     ["Enemy, or my friend's target"] = "Ennemi, sinon la cible de mon allié",
     ["Mouseover, else target"] = "Survol, sinon la cible",
@@ -216,12 +216,12 @@ T.frFR = {
 }
 
 T.itIT = {
-    ["Stop casting"] = "Interrompi",
+    ["Stop casting"] = "Interrompi lancio",
     ["Don't stop"] = "Non interrompere",
     ["Stop channels"] = "Interrompi canalizzazioni",
-    ["Stop current cast"] = "Interrompi il lancio in corso",
+    ["Stop everything"] = "Interrompi tutto",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Interrompi canalizzazioni: interrompe un incantesimo canalizzato (Dardi Arcani, Bufera...), mai questo stesso incantesimo.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interrompi il lancio in corso: interrompe tutto, anche un colpo di bacchetta. Premerlo due volte fa ripartire questo incantesimo.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interrompi tutto: interrompe tutto, anche un colpo di bacchetta. Premerlo due volte fa ripartire questo incantesimo.",
     ["When it cuts a cast, the new spell may need a second press."] = "Quando interrompe un lancio, il nuovo incantesimo può richiedere una seconda pressione.",
     ["Enemy, or my friend's target"] = "Nemico o bersaglio dell'alleato",
     ["Mouseover, else target"] = "Sotto il mouse, altrimenti il bersaglio",
@@ -285,12 +285,12 @@ T.itIT = {
 }
 
 T.ptBR = {
-    ["Stop casting"] = "Interromper",
+    ["Stop casting"] = "Interromper lançamento",
     ["Don't stop"] = "Não interromper",
     ["Stop channels"] = "Interromper canalizações",
-    ["Stop current cast"] = "Interromper o lançamento atual",
+    ["Stop everything"] = "Interromper tudo",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Interromper canalizações: corta um feitiço canalizado (Mísseis Arcanos, Nevasca...), nunca este mesmo feitiço.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interromper o lançamento atual: corta tudo, inclusive o disparo da varinha. Apertar duas vezes recomeça este feitiço.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interromper tudo: corta tudo, inclusive o disparo da varinha. Apertar duas vezes recomeça este feitiço.",
     ["When it cuts a cast, the new spell may need a second press."] = "Ao cortar um lançamento, o novo feitiço pode precisar de um segundo toque.",
     ["Enemy, or my friend's target"] = "Inimigo, ou o alvo do meu aliado",
     ["Mouseover, else target"] = "Sob o mouse, ou o alvo",
@@ -354,12 +354,12 @@ T.ptBR = {
 }
 
 T.ruRU = {
-    ["Stop casting"] = "Прерывать",
+    ["Stop casting"] = "Прерывание",
     ["Don't stop"] = "Не прерывать",
     ["Stop channels"] = "Прерывать поддержку",
-    ["Stop current cast"] = "Прерывать текущее",
+    ["Stop everything"] = "Прерывать всё",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Прерывать поддержку: прерывает поддерживаемое заклинание (Чародейские стрелы, Снежная буря...), но никогда не это заклинание.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Прерывать текущее: прерывает всё, включая выстрел из жезла. Двойное нажатие начинает это заклинание заново.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Прерывать всё: прерывает всё, включая выстрел из жезла. Двойное нажатие начинает это заклинание заново.",
     ["When it cuts a cast, the new spell may need a second press."] = "После прерывания заклинания новому может понадобиться второе нажатие.",
     ["Enemy, or my friend's target"] = "Враг, иначе цель союзника",
     ["Mouseover, else target"] = "Под курсором, иначе цель",
@@ -423,12 +423,12 @@ T.ruRU = {
 }
 
 T.koKR = {
-    ["Stop casting"] = "취소",
+    ["Stop casting"] = "시전 취소",
     ["Don't stop"] = "취소 안 함",
     ["Stop channels"] = "정신 집중 취소",
-    ["Stop current cast"] = "현재 시전 취소",
+    ["Stop everything"] = "모두 취소",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "정신 집중 취소: 정신 집중 주문(신비한 화살, 눈보라 등)만 취소하며, 이 주문 자체는 취소하지 않습니다.",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "현재 시전 취소: 마법봉 사격을 포함해 모든 것을 취소합니다. 두 번 누르면 이 주문이 다시 시작됩니다.",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "모두 취소: 마법봉 사격을 포함해 모든 것을 취소합니다. 두 번 누르면 이 주문이 다시 시작됩니다.",
     ["When it cuts a cast, the new spell may need a second press."] = "시전을 취소하면 새 주문을 한 번 더 눌러야 할 수 있습니다.",
     ["Enemy, or my friend's target"] = "적, 아니면 아군의 대상",
     ["Mouseover, else target"] = "마우스오버, 아니면 대상",
@@ -492,12 +492,12 @@ T.koKR = {
 }
 
 T.zhCN = {
-    ["Stop casting"] = "打断",
+    ["Stop casting"] = "打断施法",
     ["Don't stop"] = "不打断",
     ["Stop channels"] = "打断引导",
-    ["Stop current cast"] = "打断当前施法",
+    ["Stop everything"] = "全部打断",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "打断引导：打断引导法术（奥术飞弹、暴风雪等），绝不会打断这个法术本身。",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "打断当前施法：打断任何施法，包括魔杖射击。连按两次会让这个法术重新开始。",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "全部打断：打断任何施法，包括魔杖射击。连按两次会让这个法术重新开始。",
     ["When it cuts a cast, the new spell may need a second press."] = "打断施法后，新法术可能需要再按一次。",
     ["Enemy, or my friend's target"] = "敌人，否则为队友的目标",
     ["Mouseover, else target"] = "鼠标悬停，否则为目标",
@@ -561,12 +561,12 @@ T.zhCN = {
 }
 
 T.zhTW = {
-    ["Stop casting"] = "打斷",
+    ["Stop casting"] = "打斷施法",
     ["Don't stop"] = "不打斷",
     ["Stop channels"] = "打斷引導",
-    ["Stop current cast"] = "打斷目前施法",
+    ["Stop everything"] = "全部打斷",
     ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "打斷引導：打斷引導法術（秘法飛彈、暴風雪等），絕不會打斷這個法術本身。",
-    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "打斷目前施法：打斷任何施法，包括魔杖射擊。連按兩次會讓這個法術重新開始。",
+    ["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "全部打斷：打斷任何施法，包括魔杖射擊。連按兩次會讓這個法術重新開始。",
     ["When it cuts a cast, the new spell may need a second press."] = "打斷施法後，新法術可能需要再按一次。",
     ["Enemy, or my friend's target"] = "敵人，否則為隊友的目標",
     ["Mouseover, else target"] = "滑鼠指向，否則為目標",

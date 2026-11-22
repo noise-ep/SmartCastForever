@@ -2,7 +2,7 @@
 
 ## 0.1.4
 
-- "Stop current cast first" is now a choice with three values: *Don't stop*, *Stop channels* (cuts Arcane Missiles, Blizzard... but never the spell itself, so a second press doesn't restart it) and *Stop current cast* (cuts anything, a wand shot too). Buttons already set keep cutting everything.
+- "Stop current cast first" is now a choice with three values: *Don't stop*, *Stop channels* (cuts Arcane Missiles, Blizzard... but never the spell itself, so a second press doesn't restart it) and *Stop everything* (cuts anything, a wand shot too). Buttons already set keep cutting everything.
 
 ## 0.1.3
 

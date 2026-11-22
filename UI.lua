@@ -334,9 +334,9 @@ local function Build()
 
     editor.stopLabel = Label(ed, L["Stop casting"], "GameFontHighlightSmall")
     editor.stopLabel:SetPoint("TOPLEFT", 0, -218)
-    Fit(editor.stopLabel, 84)
-    editor.stop = Choice(ed, EDITOR_W - 90, function()
-            return { { "none", L["Don't stop"] }, { "channel", L["Stop channels"] }, { "all", L["Stop current cast"] } }
+    Fit(editor.stopLabel, 106)
+    editor.stop = Choice(ed, EDITOR_W - 112, function()
+            return { { "none", L["Don't stop"] }, { "channel", L["Stop channels"] }, { "all", L["Stop everything"] } }
         end,
         function() local p = selected and ns.Plan(selected); return p and p.stopMode or "none" end,
         function(v) ns.SetSlot(selected, "stopMode", v) end)
@@ -345,7 +345,7 @@ local function Build()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(L["Stop casting"])
         GameTooltip:AddLine(L["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."], 1, 1, 1, true)
-        GameTooltip:AddLine(L["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."], 1, 1, 1, true)
+        GameTooltip:AddLine(L["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."], 1, 1, 1, true)
         GameTooltip:AddLine(L["When it cuts a cast, the new spell may need a second press."], 0.8, 0.8, 0.8, true)
         GameTooltip:Show()
     end)
