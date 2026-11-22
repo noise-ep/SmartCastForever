@@ -12,3 +12,7 @@ Turns the spells on your action bars into smart macros, in the same buttons, and
 `/scf` opens the window. `/scf apply`, `/scf undo`. Minimap button: left-click settings, right-click apply, Shift + right-click undo.
 
 Settings are saved per character. Macros are character macros.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
