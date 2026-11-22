@@ -225,7 +225,8 @@ function ns.Plan(slot)
         rank = ns.SpellRank(id), mode = mode, template = template,
         fixedRank = o and o.rank or nil,
         shiftSelf = o and o.shiftSelf or false,
-        stopCasting = o and o.stopCasting or false,
+        -- "none" | "channel" | "all"; older settings saved a plain true for "all"
+        stopMode = o and (o.stopMode or (o.stopCasting and "all")) or "none",
         noToggle = db.noToggle and true or false,
     }
     -- ranks: does the button hold an older rank than the best one you know?
@@ -263,7 +264,10 @@ function ns.Body(p)
     -- the spell named in #showtooltip: the button keeps its icon and tooltip even when
     -- no condition matches (no target yet), instead of a question mark
     -- /stopcasting first: cuts a wand shot (or anything else being cast) so this spell goes out now
-    local stop = p.stopCasting and "/stopcasting\n" or ""
+    -- "all": cuts anything being cast (a wand shot too); "channel": only a channeled
+    -- spell, so a spell with a cast time never cuts itself on a second press
+    local stop = (p.stopMode == "all" and "/stopcasting\n")
+        or (p.stopMode == "channel" and "/stopcasting [channeling]\n") or ""
     return ("#showtooltip %s\n%s/cast %s %s%s"):format(spell, stop, cond, p.noToggle and "!" or "", spell)
 end
 
@@ -579,8 +583,8 @@ function ns.SetSlot(slot, key, value)
             d.fixedRank = value
         elseif key == "shiftSelf" then
             d.shiftSelf = value
-        elseif key == "stopCasting" then
-            d.stopCasting = value
+        elseif key == "stopMode" then
+            d.stopMode = value
         end
         d.body = d.template ~= "skip" and ns.Body(d) or nil
         ns.Changed()
@@ -638,7 +642,7 @@ local function DemoPlan(slot, e, template, state)
         slot = slot, current = state == "converted" and "ours" or "spell",
         id = e.id, name = e.name, kind = kind, icon = ns.SpellIcon(e.id), rank = e.rank,
         mode = "default", template = template, noToggle = ns.char.noToggle and true or false,
-        shiftSelf = false, stopCasting = false, state = state, decided = true, needsDecision = false,
+        shiftSelf = false, stopMode = "none", state = state, decided = true, needsDecision = false,
     }
     if template ~= (ns.char.defaults[kind] or "skip") then p.mode = template end
     if template ~= "skip" then p.body = ns.Body(p) end

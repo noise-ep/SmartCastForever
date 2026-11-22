@@ -332,25 +332,32 @@ local function Build()
 
     editor.shift:SetPoint("TOPLEFT", -4, -192)
 
-    editor.stop = Check(ed, L["Stop current cast first"],
-        function() local p = selected and ns.Plan(selected); return p and p.stopCasting end,
-        function(v) ns.SetSlot(selected, "stopCasting", v) end, 220)
-    editor.stop:SetPoint("TOPLEFT", -4, -216)
-    editor.stop:SetScript("OnEnter", function(self)
+    editor.stopLabel = Label(ed, L["Stop casting"], "GameFontHighlightSmall")
+    editor.stopLabel:SetPoint("TOPLEFT", 0, -218)
+    Fit(editor.stopLabel, 84)
+    editor.stop = Choice(ed, EDITOR_W - 90, function()
+            return { { "none", L["Don't stop"] }, { "channel", L["Stop channels"] }, { "all", L["Stop current cast"] } }
+        end,
+        function() local p = selected and ns.Plan(selected); return p and p.stopMode or "none" end,
+        function(v) ns.SetSlot(selected, "stopMode", v) end)
+    editor.stop:SetPoint("TOPRIGHT", ed, "TOPLEFT", EDITOR_W, -213)
+    editor.stop:HookScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["Stop current cast first"])
-        GameTooltip:AddLine(L["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."], 1, 1, 1, true)
+        GameTooltip:SetText(L["Stop casting"])
+        GameTooltip:AddLine(L["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."], 1, 1, 1, true)
+        GameTooltip:AddLine(L["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."], 1, 1, 1, true)
+        GameTooltip:AddLine(L["The global cooldown still applies: right after starting a cast, the new spell may need a second press."], 0.8, 0.8, 0.8, true)
         GameTooltip:Show()
     end)
-    editor.stop:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    editor.stop:HookScript("OnLeave", function() GameTooltip:Hide() end)
 
     editor.state = Label(ed, "", "GameFontHighlightSmall")
-    editor.state:SetPoint("TOPLEFT", 0, -246)
+    editor.state:SetPoint("TOPLEFT", 0, -250)
     editor.state:SetWidth(EDITOR_W)
     editor.previewLabel = Label(ed, L["Macro preview"], "GameFontHighlightSmall")
-    editor.previewLabel:SetPoint("TOPLEFT", 0, -268)
+    editor.previewLabel:SetPoint("TOPLEFT", 0, -272)
     editor.preview = Label(ed, "", "GameFontDisableSmall")
-    editor.preview:SetPoint("TOPLEFT", 0, -284)
+    editor.preview:SetPoint("TOPLEFT", 0, -288)
     editor.preview:SetWidth(EDITOR_W)
     editor.preview:SetJustifyV("TOP")
     -- macro conditions have no spaces: let them wrap anywhere instead of being cut with "..."
@@ -377,7 +384,7 @@ local function DrawEditor()
     local p = selected and ns.Plan(selected)
     local show = p and p.name and true or false
     for _, w in ipairs({ editor.icon, editor.name, editor.sub, editor.ruleLabel, editor.rule, editor.state,
-            editor.previewLabel, editor.preview, editor.shift, editor.stop }) do
+            editor.previewLabel, editor.preview, editor.shift, editor.stop, editor.stopLabel }) do
         w:SetShown(show)
     end
     editor.empty:SetShown(not show)
@@ -407,6 +414,7 @@ local function DrawEditor()
     editor.shift:SetShown(p.template ~= "skip" and p.template ~= "self")
     editor.stop:Refresh()
     editor.stop:SetShown(p.template ~= "skip")
+    editor.stopLabel:SetShown(p.template ~= "skip")
     local c = COLORS[p.state] or COLORS.skip
     editor.state:SetText(STATE_TEXT[p.state] or "")
     editor.state:SetTextColor(c[1], c[2], c[3])
@@ -435,7 +443,7 @@ function ns.RefreshWindow()
             row:Hide()
         end
     end
-    frame:SetHeight(math.max(178 + shown * ROW_H + 60, 178 + 340 + 60))
+    frame:SetHeight(math.max(178 + shown * ROW_H + 60, 178 + 350 + 60))
 
     DrawEditor()
     local converted, todo = ns.Counts()

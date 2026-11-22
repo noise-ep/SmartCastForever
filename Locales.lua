@@ -8,8 +8,13 @@ ns.L = L
 local T = {}
 
 T.esES = {
-    ["Stop current cast first"] = "Cortar el lanzamiento actual",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Añade /stopcasting: el hechizo sale al momento y corta el disparo de la varita. También corta tu propio lanzamiento, así que si lo pulsas dos veces vuelve a empezar. Va mejor en hechizos instantáneos y curaciones.",
+    ["Stop casting"] = "Cortar",
+    ["Don't stop"] = "No cortar",
+    ["Stop channels"] = "Cortar canalizaciones",
+    ["Stop current cast"] = "Cortar lo actual",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Cortar canalizaciones: corta un hechizo canalizado (Proyectiles Arcanos, Ventisca...), nunca este mismo hechizo.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Cortar lo actual: corta cualquier cosa, también el disparo de la varita. Si lo pulsas dos veces, este hechizo vuelve a empezar.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "El tiempo de reutilización global sigue contando: justo después de empezar un lanzamiento, el nuevo hechizo puede necesitar una segunda pulsación.",
     ["Enemy, or my friend's target"] = "Enemigo, o el objetivo de mi aliado",
     ["Mouseover, else target"] = "Ratón encima, si no el objetivo",
     ["Friend, else myself"] = "Aliado, si no yo mismo",
@@ -73,8 +78,13 @@ T.esES = {
 T.esMX = T.esES
 
 T.deDE = {
-    ["Stop current cast first"] = "Aktuellen Zauber zuerst abbrechen",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Fügt /stopcasting hinzu: der Zauber kommt sofort und unterbricht einen Zauberstabschuss. Er bricht auch deinen eigenen Zauber ab, zweimal drücken startet ihn neu. Am besten für Spontanzauber und Heilungen.",
+    ["Stop casting"] = "Abbrechen",
+    ["Don't stop"] = "Nicht abbrechen",
+    ["Stop channels"] = "Kanalisierungen abbrechen",
+    ["Stop current cast"] = "Aktuellen Zauber abbrechen",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Kanalisierungen abbrechen: bricht einen kanalisierten Zauber ab (Arkane Geschosse, Blizzard...), nie diesen Zauber selbst.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Aktuellen Zauber abbrechen: bricht alles ab, auch einen Zauberstabschuss. Zweimal drücken startet diesen Zauber neu.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "Die globale Abklingzeit gilt weiterhin: direkt nach Beginn eines Zaubers braucht der neue Zauber eventuell einen zweiten Druck.",
     ["Enemy, or my friend's target"] = "Feind oder Ziel des Verbündeten",
     ["Mouseover, else target"] = "Mouseover, sonst Ziel",
     ["Friend, else myself"] = "Verbündeter, sonst ich selbst",
@@ -137,8 +147,13 @@ T.deDE = {
 }
 
 T.frFR = {
-    ["Stop current cast first"] = "Interrompre le sort en cours",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Ajoute /stopcasting : le sort part tout de suite et coupe un tir de baguette. Il coupe aussi votre propre incantation : appuyer deux fois la relance. Idéal pour les sorts instantanés et les soins.",
+    ["Stop casting"] = "Interrompre",
+    ["Don't stop"] = "Ne pas interrompre",
+    ["Stop channels"] = "Interrompre les canalisations",
+    ["Stop current cast"] = "Interrompre le sort en cours",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Interrompre les canalisations : coupe un sort canalisé (Projectiles des arcanes, Blizzard...), jamais ce sort lui-même.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interrompre le sort en cours : coupe tout, un tir de baguette aussi. Appuyer deux fois relance ce sort.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "Le temps de recharge global s'applique toujours : juste après le début d'une incantation, le nouveau sort peut demander un second appui.",
     ["Enemy, or my friend's target"] = "Ennemi, sinon la cible de mon allié",
     ["Mouseover, else target"] = "Survol, sinon la cible",
     ["Friend, else myself"] = "Allié, sinon moi-même",
@@ -201,8 +216,13 @@ T.frFR = {
 }
 
 T.itIT = {
-    ["Stop current cast first"] = "Interrompi il lancio in corso",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Aggiunge /stopcasting: l'incantesimo parte subito e interrompe il colpo di bacchetta. Interrompe anche il tuo lancio, quindi premerlo due volte lo fa ripartire. Ideale per incantesimi istantanei e cure.",
+    ["Stop casting"] = "Interrompi",
+    ["Don't stop"] = "Non interrompere",
+    ["Stop channels"] = "Interrompi canalizzazioni",
+    ["Stop current cast"] = "Interrompi il lancio in corso",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Interrompi canalizzazioni: interrompe un incantesimo canalizzato (Dardi Arcani, Bufera...), mai questo stesso incantesimo.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interrompi il lancio in corso: interrompe tutto, anche un colpo di bacchetta. Premerlo due volte fa ripartire questo incantesimo.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "Il tempo di recupero globale resta: subito dopo l'inizio di un lancio, il nuovo incantesimo può richiedere una seconda pressione.",
     ["Enemy, or my friend's target"] = "Nemico o bersaglio dell'alleato",
     ["Mouseover, else target"] = "Sotto il mouse, altrimenti il bersaglio",
     ["Friend, else myself"] = "Alleato, altrimenti me stesso",
@@ -265,8 +285,13 @@ T.itIT = {
 }
 
 T.ptBR = {
-    ["Stop current cast first"] = "Interromper o lançamento atual",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Adiciona /stopcasting: o feitiço sai na hora e corta o disparo da varinha. Também corta seu próprio lançamento, então apertar duas vezes recomeça o feitiço. Melhor para feitiços instantâneos e curas.",
+    ["Stop casting"] = "Interromper",
+    ["Don't stop"] = "Não interromper",
+    ["Stop channels"] = "Interromper canalizações",
+    ["Stop current cast"] = "Interromper o lançamento atual",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Interromper canalizações: corta um feitiço canalizado (Mísseis Arcanos, Nevasca...), nunca este mesmo feitiço.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Interromper o lançamento atual: corta tudo, inclusive o disparo da varinha. Apertar duas vezes recomeça este feitiço.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "O tempo de recarga global continua valendo: logo após começar um lançamento, o novo feitiço pode precisar de um segundo toque.",
     ["Enemy, or my friend's target"] = "Inimigo, ou o alvo do meu aliado",
     ["Mouseover, else target"] = "Sob o mouse, ou o alvo",
     ["Friend, else myself"] = "Aliado, ou eu mesmo",
@@ -329,8 +354,13 @@ T.ptBR = {
 }
 
 T.ruRU = {
-    ["Stop current cast first"] = "Сначала прервать текущее",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Добавляет /stopcasting: заклинание срабатывает сразу, прерывая выстрел из жезла. Оно прерывает и ваше собственное заклинание, поэтому двойное нажатие начнёт его заново. Лучше всего для мгновенных заклинаний и исцеления.",
+    ["Stop casting"] = "Прерывать",
+    ["Don't stop"] = "Не прерывать",
+    ["Stop channels"] = "Прерывать поддержку",
+    ["Stop current cast"] = "Прерывать текущее",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "Прерывать поддержку: прерывает поддерживаемое заклинание (Чародейские стрелы, Снежная буря...), но никогда не это заклинание.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "Прерывать текущее: прерывает всё, включая выстрел из жезла. Двойное нажатие начинает это заклинание заново.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "Общее время восстановления по-прежнему действует: сразу после начала заклинания новому может понадобиться второе нажатие.",
     ["Enemy, or my friend's target"] = "Враг, иначе цель союзника",
     ["Mouseover, else target"] = "Под курсором, иначе цель",
     ["Friend, else myself"] = "Союзник, иначе я сам",
@@ -393,8 +423,13 @@ T.ruRU = {
 }
 
 T.koKR = {
-    ["Stop current cast first"] = "현재 시전 먼저 취소",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "/stopcasting을 추가합니다: 마법봉 사격을 끊고 주문이 바로 시전됩니다. 자신의 시전도 취소하므로 두 번 누르면 다시 시작됩니다. 즉시 시전 주문과 치유에 가장 좋습니다.",
+    ["Stop casting"] = "취소",
+    ["Don't stop"] = "취소 안 함",
+    ["Stop channels"] = "정신 집중 취소",
+    ["Stop current cast"] = "현재 시전 취소",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "정신 집중 취소: 정신 집중 주문(신비한 화살, 눈보라 등)만 취소하며, 이 주문 자체는 취소하지 않습니다.",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "현재 시전 취소: 마법봉 사격을 포함해 모든 것을 취소합니다. 두 번 누르면 이 주문이 다시 시작됩니다.",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "전역 재사용 대기시간은 그대로 적용됩니다: 시전을 시작한 직후에는 새 주문을 한 번 더 눌러야 할 수 있습니다.",
     ["Enemy, or my friend's target"] = "적, 아니면 아군의 대상",
     ["Mouseover, else target"] = "마우스오버, 아니면 대상",
     ["Friend, else myself"] = "아군, 아니면 나 자신",
@@ -457,8 +492,13 @@ T.koKR = {
 }
 
 T.zhCN = {
-    ["Stop current cast first"] = "先打断当前施法",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "添加 /stopcasting：法术会立即施放并打断魔杖射击。它也会打断你自己的施法，连按两次会重新开始。最适合瞬发法术和治疗。",
+    ["Stop casting"] = "打断",
+    ["Don't stop"] = "不打断",
+    ["Stop channels"] = "打断引导",
+    ["Stop current cast"] = "打断当前施法",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "打断引导：打断引导法术（奥术飞弹、暴风雪等），绝不会打断这个法术本身。",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "打断当前施法：打断任何施法，包括魔杖射击。连按两次会让这个法术重新开始。",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "公共冷却仍然有效：刚开始施法后，新法术可能需要再按一次。",
     ["Enemy, or my friend's target"] = "敌人，否则为队友的目标",
     ["Mouseover, else target"] = "鼠标悬停，否则为目标",
     ["Friend, else myself"] = "友方，否则为自己",
@@ -521,8 +561,13 @@ T.zhCN = {
 }
 
 T.zhTW = {
-    ["Stop current cast first"] = "先打斷目前施法",
-    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "加入 /stopcasting：法術會立即施放並打斷魔杖射擊。它也會打斷你自己的施法，連按兩次會重新開始。最適合瞬發法術和治療。",
+    ["Stop casting"] = "打斷",
+    ["Don't stop"] = "不打斷",
+    ["Stop channels"] = "打斷引導",
+    ["Stop current cast"] = "打斷目前施法",
+    ["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."] = "打斷引導：打斷引導法術（秘法飛彈、暴風雪等），絕不會打斷這個法術本身。",
+    ["Stop current cast: cuts anything, a wand shot too. Pressing it twice restarts this spell."] = "打斷目前施法：打斷任何施法，包括魔杖射擊。連按兩次會讓這個法術重新開始。",
+    ["The global cooldown still applies: right after starting a cast, the new spell may need a second press."] = "公共冷卻仍然有效：剛開始施法後，新法術可能需要再按一次。",
     ["Enemy, or my friend's target"] = "敵人，否則為隊友的目標",
     ["Mouseover, else target"] = "滑鼠指向，否則為目標",
     ["Friend, else myself"] = "友方，否則為自己",

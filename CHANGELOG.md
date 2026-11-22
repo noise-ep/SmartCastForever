@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- "Stop current cast first" is now a choice with three values: *Don't stop*, *Stop channels* (cuts Arcane Missiles, Blizzard... but never the spell itself, so a second press doesn't restart it) and *Stop current cast* (cuts anything, a wand shot too). Buttons already set keep cutting everything.
+
 ## 0.1.3
 
 - New per-button option: *Stop current cast first*. Adds `/stopcasting` so the spell goes out at once, cutting a wand shot. It also cuts your own cast, so it's best on instant spells and heals.
