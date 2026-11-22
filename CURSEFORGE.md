@@ -11,7 +11,7 @@ Pick a rule for your spells, press **Apply**, and each button becomes a macro th
 - **Enemy, or my friend's target**: a friend selected by mistake? The spell goes to whatever they are attacking.
 - **Mouseover, else target**: cast without changing your target.
 - **Friend, else myself**: buffs and heals land on you when no friend is selected.
-- **Friend, else my enemy's target, else myself**: an enemy selected by mistake? The heal goes to whoever it is hitting.
+- **Friend, enemy's target or me**: an enemy selected by mistake? The heal goes to whoever it is hitting.
 - **Always myself**.
 - **Don't touch**: leave a button as it is.
 

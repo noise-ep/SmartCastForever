@@ -2,7 +2,7 @@
 
 ## 0.1.3
 
-- New per-button option: *Stop what I'm casting first (wand too)*. Adds `/stopcasting` so the spell goes out at once, cutting a wand shot. It also cuts your own cast, so it's best on instant spells and heals.
+- New per-button option: *Stop current cast first*. Adds `/stopcasting` so the spell goes out at once, cutting a wand shot. It also cuts your own cast, so it's best on instant spells and heals.
 
 ## 0.1.2
 
@@ -18,7 +18,7 @@
 First release.
 
 - Turns the spells on your action bars into smart macros, in the same buttons, so your keybinds stay.
-- Targeting rules: *Enemy, or my friend's target*; *Mouseover, else target*; *Friend, else myself*; *Friend, else my enemy's target, else myself*; *Always myself*; or leave the button alone.
+- Targeting rules: *Enemy, or my friend's target*; *Mouseover, else target*; *Friend, else myself*; *Friend, enemy's target or me*; *Always myself*; or leave the button alone.
 - Default rules for harmful, helpful and other spells, plus per-button choices.
 - Rank control: follow the highest rank you know, or keep a fixed one.
 - Older ranks on your bars: detected, with a choice to use the highest or keep them. Plain spells on your bars can follow new ranks by themselves.

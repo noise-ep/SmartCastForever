@@ -14,7 +14,7 @@ ns.TEMPLATE_NAMES = {
     enemyAssist = L["Enemy, or my friend's target"],
     mouseover = L["Mouseover, else target"],
     friendSelf = L["Friend, else myself"],
-    friendAssist = L["Friend, else my enemy's target, else myself"],
+    friendAssist = L["Friend, enemy's target or me"],
     self = L["Always myself"],
     skip = L["Don't touch"],
 }

@@ -36,6 +36,21 @@ end
 
 -- a button that shows the current choice and opens a menu of the others
 -- (cycles through them where the game has no menu API)
+-- shrink a text's font until it fits `maxWidth`, so long translations stay inside
+-- their button or row instead of spilling out
+local function Fit(fs, maxWidth)
+    if not (fs and fs.GetFont) then return end
+    local file, size, flags = fs:GetFont()
+    if not file then return end
+    fs.scfBase = fs.scfBase or size
+    size = fs.scfBase
+    fs:SetFont(file, size, flags)
+    while fs:GetStringWidth() > maxWidth and size > 7 do
+        size = size - 0.5
+        fs:SetFont(file, size, flags)
+    end
+end
+
 local function Choice(parent, width, options, get, set)
     local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     b:SetSize(width, 22)
@@ -47,6 +62,7 @@ local function Choice(parent, width, options, get, set)
             if o[1] == current then text = o[2] end
         end
         self:SetText(text)
+        Fit(self:GetFontString(), width - 14)
     end
     b:SetScript("OnClick", function(self)
         local list = options()
@@ -67,11 +83,12 @@ local function Choice(parent, width, options, get, set)
     return b
 end
 
-local function Check(parent, text, get, set)
+local function Check(parent, text, get, set, maxWidth)
     local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
     cb:SetSize(24, 24)
     cb.label = Label(cb, text, "GameFontHighlightSmall")
     cb.label:SetPoint("LEFT", cb, "RIGHT", 2, 0)
+    if maxWidth then Fit(cb.label, maxWidth) end
     if cb.Text then cb.Text:SetText("") end
     if cb.text then cb.text:SetText("") end
     cb:SetScript("OnClick", function(self) set(self:GetChecked() and true or false) end)
@@ -200,12 +217,12 @@ local function Build()
     end
     local noToggle = Check(frame, L["Don't cancel if already active (!)"],
         function() return ns.char.noToggle end,
-        function(v) ns.char.noToggle = v; ns.Changed() end)
+        function(v) ns.char.noToggle = v; ns.Changed() end, 205)
     noToggle:SetPoint("TOPLEFT", 12, -96)
     defaultsUI[#defaultsUI + 1] = noToggle
     local hideNames = Check(frame, L["Hide macro names on the buttons"],
         function() return ns.db.hideNames end,
-        function(v) ns.db.hideNames = v; if ns.RefreshButtonNames then ns.RefreshButtonNames() end end)
+        function(v) ns.db.hideNames = v; if ns.RefreshButtonNames then ns.RefreshButtonNames() end end, 330)
     hideNames:SetPoint("TOPLEFT", 252, -96)
     defaultsUI[#defaultsUI + 1] = hideNames
 
@@ -220,7 +237,7 @@ local function Build()
     defaultsUI[#defaultsUI + 1] = oldRank
     local upgrade = Check(frame, L["Keep the spells on my bars at their highest rank"],
         function() return ns.char.autoUpgrade end,
-        function(v) ns.char.autoUpgrade = v; if v then ns.Upgrade() end; ns.Changed() end)
+        function(v) ns.char.autoUpgrade = v; if v then ns.Upgrade() end; ns.Changed() end, 330)
     upgrade:SetPoint("LEFT", oldRank, "RIGHT", 14, 0)
     defaultsUI[#defaultsUI + 1] = upgrade
 
@@ -296,7 +313,7 @@ local function Build()
 
     editor.shift = Check(ed, L["Shift: cast on myself"],
         function() local p = selected and ns.Plan(selected); return p and p.shiftSelf end,
-        function(v) ns.SetSlot(selected, "shiftSelf", v) end)
+        function(v) ns.SetSlot(selected, "shiftSelf", v) end, 220)
     editor.rankInfo = Label(ed, "", "GameFontHighlightSmall")
     editor.rankInfo:SetPoint("TOPLEFT", 0, -136)
     editor.rankInfo:SetWidth(EDITOR_W)
@@ -315,13 +332,13 @@ local function Build()
 
     editor.shift:SetPoint("TOPLEFT", -4, -192)
 
-    editor.stop = Check(ed, L["Stop what I'm casting first (wand too)"],
+    editor.stop = Check(ed, L["Stop current cast first"],
         function() local p = selected and ns.Plan(selected); return p and p.stopCasting end,
-        function(v) ns.SetSlot(selected, "stopCasting", v) end)
+        function(v) ns.SetSlot(selected, "stopCasting", v) end, 220)
     editor.stop:SetPoint("TOPLEFT", -4, -216)
     editor.stop:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["Stop what I'm casting first (wand too)"])
+        GameTooltip:SetText(L["Stop current cast first"])
         GameTooltip:AddLine(L["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."], 1, 1, 1, true)
         GameTooltip:Show()
     end)
