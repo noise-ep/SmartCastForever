@@ -106,6 +106,9 @@ local function ShowTooltip(button)
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine("|cff66ccffSmartCast:|r " .. (ns.TEMPLATE_NAMES[p.template] or ""), 1, 1, 1)
         if p.fixedRank then GameTooltip:AddLine(L["Rank"] .. ": " .. p.fixedRank, 1, 1, 1) end
+        if p.outdated then
+            GameTooltip:AddLine((L["This button holds %s; you know up to %s."]):format(p.rank, p.best.rank), 1, 0.82, 0)
+        end
         local c = COLORS[p.state] or COLORS.skip
         GameTooltip:AddLine(STATE_TEXT[p.state] or "", c[1], c[2], c[3])
     end
@@ -126,6 +129,12 @@ local function SlotButton(parent)
     b.icon:SetPoint("TOPLEFT", 2, -2)
     b.icon:SetPoint("BOTTOMRIGHT", -2, 2)
     b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    -- an older rank than you know, still waiting for your choice
+    b.older = b:CreateTexture(nil, "OVERLAY")
+    b.older:SetSize(14, 14)
+    b.older:SetPoint("TOPRIGHT", 3, 3)
+    b.older:SetTexture("Interface\\Buttons\\Arrow-Up-Up")
+    b.older:Hide()
     b:SetScript("OnClick", function(self)
         selected = self.slot
         ns.RefreshWindow()
@@ -147,6 +156,7 @@ local function DrawSlot(b, slot)
     b.icon:SetDesaturated(state == "skip" or state == "foreign")
     b.icon:SetAlpha((state == "foreign") and 0.5 or 1)
     b.selected:SetShown(slot == selected)
+    b.older:SetShown(p and p.needsDecision and true or false)
 end
 
 ---------------------------------------------------------------------------
@@ -199,9 +209,24 @@ local function Build()
     hideNames:SetPoint("TOPLEFT", 252, -96)
     defaultsUI[#defaultsUI + 1] = hideNames
 
+    local oldLabel = Label(frame, L["Older ranks on a button"], "GameFontHighlightSmall")
+    oldLabel:SetPoint("TOPLEFT", 16, -128)
+    local oldRank = Choice(frame, 200, function()
+            return { { "ask", L["Ask me"] }, { "max", L["Use the highest"] }, { "keep", L["Keep the button's rank"] } }
+        end,
+        function() return ns.char.oldRank end,
+        function(v) ns.char.oldRank = v; ns.ResolveRanks(); ns.Changed() end)
+    oldRank:SetPoint("LEFT", oldLabel, "RIGHT", 8, 0)
+    defaultsUI[#defaultsUI + 1] = oldRank
+    local upgrade = Check(frame, L["Keep the spells on my bars at their highest rank"],
+        function() return ns.char.autoUpgrade end,
+        function(v) ns.char.autoUpgrade = v; if v then ns.Upgrade() end; ns.Changed() end)
+    upgrade:SetPoint("LEFT", oldRank, "RIGHT", 14, 0)
+    defaultsUI[#defaultsUI + 1] = upgrade
+
     -- the bars
     local barsHead = Label(frame, L["Your bars"])
-    barsHead:SetPoint("TOPLEFT", 16, -128)
+    barsHead:SetPoint("TOPLEFT", 16, -158)
     local hint = Label(frame, L["Click a button to set it up."], "GameFontDisableSmall")
     hint:SetPoint("LEFT", barsHead, "RIGHT", 10, 0)
     for r = 1, #ns.BARS do
@@ -222,7 +247,7 @@ local function Build()
     -- the editor for one button
     local ed = CreateFrame("Frame", nil, frame)
     ed:SetSize(EDITOR_W, 300)
-    ed:SetPoint("TOPLEFT", 16 + LABEL_W + 12 * (ICON + GAP) + 20, -128)
+    ed:SetPoint("TOPLEFT", 16 + LABEL_W + 12 * (ICON + GAP) + 20, -158)
     editor.frame = ed
     editor.icon = ed:CreateTexture(nil, "ARTWORK")
     editor.icon:SetSize(36, 36)
@@ -272,15 +297,31 @@ local function Build()
     editor.shift = Check(ed, L["Shift: cast on myself"],
         function() local p = selected and ns.Plan(selected); return p and p.shiftSelf end,
         function(v) ns.SetSlot(selected, "shiftSelf", v) end)
-    editor.shift:SetPoint("TOPLEFT", -4, -136)
+    editor.rankInfo = Label(ed, "", "GameFontHighlightSmall")
+    editor.rankInfo:SetPoint("TOPLEFT", 0, -136)
+    editor.rankInfo:SetWidth(EDITOR_W)
+    editor.rankInfo:SetTextColor(1, 0.82, 0)
+    editor.useMax = CreateFrame("Button", nil, ed, "UIPanelButtonTemplate")
+    editor.useMax:SetSize(EDITOR_W / 2 - 3, 22)
+    editor.useMax:SetPoint("TOPLEFT", 0, -164)
+    editor.useMax:SetNormalFontObject("GameFontHighlightSmall")
+    editor.useMax:SetText(L["Use the highest"])
+    editor.useMax:SetScript("OnClick", function() ns.DecideSlot(selected, false) end)
+    editor.keep = CreateFrame("Button", nil, ed, "UIPanelButtonTemplate")
+    editor.keep:SetSize(EDITOR_W / 2 - 3, 22)
+    editor.keep:SetPoint("LEFT", editor.useMax, "RIGHT", 6, 0)
+    editor.keep:SetNormalFontObject("GameFontHighlightSmall")
+    editor.keep:SetScript("OnClick", function() ns.DecideSlot(selected, true) end)
+
+    editor.shift:SetPoint("TOPLEFT", -4, -192)
 
     editor.state = Label(ed, "", "GameFontHighlightSmall")
-    editor.state:SetPoint("TOPLEFT", 0, -166)
+    editor.state:SetPoint("TOPLEFT", 0, -222)
     editor.state:SetWidth(EDITOR_W)
     editor.previewLabel = Label(ed, L["Macro preview"], "GameFontHighlightSmall")
-    editor.previewLabel:SetPoint("TOPLEFT", 0, -188)
+    editor.previewLabel:SetPoint("TOPLEFT", 0, -244)
     editor.preview = Label(ed, "", "GameFontDisableSmall")
-    editor.preview:SetPoint("TOPLEFT", 0, -204)
+    editor.preview:SetPoint("TOPLEFT", 0, -260)
     editor.preview:SetWidth(EDITOR_W)
     editor.preview:SetJustifyV("TOP")
 
@@ -311,6 +352,7 @@ local function DrawEditor()
     editor.empty:SetShown(not show)
     if not show then
         editor.rankLabel:Hide(); editor.rank:Hide()
+        editor.rankInfo:Hide(); editor.useMax:Hide(); editor.keep:Hide()
         editor.empty:SetText((p and L["Not a spell: SmartCast leaves it alone."]) or (selected and L["Empty slot"])
             or L["Click a button to set it up."])
         return
@@ -323,6 +365,13 @@ local function DrawEditor()
     editor.rankLabel:SetShown(hasRanks)
     editor.rank:SetShown(hasRanks)
     if hasRanks then editor.rank:Refresh() end
+    editor.rankInfo:SetShown(p.outdated and true or false)
+    if p.outdated then
+        editor.rankInfo:SetText((L["This button holds %s; you know up to %s."]):format(p.rank, p.best.rank))
+    end
+    editor.useMax:SetShown(p.needsDecision and true or false)
+    editor.keep:SetShown(p.needsDecision and true or false)
+    editor.keep:SetText((L["Keep %s"]):format(p.rank or ""))
     editor.shift:Refresh()
     editor.shift:SetShown(p.template ~= "skip" and p.template ~= "self")
     local c = COLORS[p.state] or COLORS.skip
@@ -345,7 +394,7 @@ function ns.RefreshWindow()
         if any or r == 1 then
             shown = shown + 1
             row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", 16, -148 - (shown - 1) * ROW_H)
+            row:SetPoint("TOPLEFT", 16, -178 - (shown - 1) * ROW_H)
             row.label:SetText(bar.name)
             for i = 1, 12 do DrawSlot(row.buttons[i], bar.first + i - 1) end
             row:Show()
@@ -353,12 +402,19 @@ function ns.RefreshWindow()
             row:Hide()
         end
     end
-    frame:SetHeight(math.max(148 + shown * ROW_H + 60, 148 + 250 + 60))
+    frame:SetHeight(math.max(178 + shown * ROW_H + 60, 178 + 300 + 60))
 
     DrawEditor()
     local converted, todo = ns.Counts()
     frame.status:SetText((L["Converted: %d   Pending: %d   Character macros: %d / %d"]):format(
         converted, todo, ns.CharacterMacroCount(), ns.MaxCharacterMacros()))
+end
+
+function ns.ShowSlot(slot)
+    if not frame then Build() end
+    selected = slot
+    frame:Show()
+    ns.RefreshWindow()
 end
 
 function ns.ToggleWindow()

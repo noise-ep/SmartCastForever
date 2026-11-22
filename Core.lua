@@ -42,6 +42,8 @@ end
 local DEFAULTS = {
     defaults = { harmful = "enemyAssist", helpful = "skip", other = "skip" },
     noToggle = true,   -- "!" in front of the spell: a second press doesn't switch it off
+    oldRank = "ask",   -- a button with an older rank than you know: "ask" | "max" | "keep"
+    autoUpgrade = true, -- plain spells on the bars follow the highest rank you learn
     slots = {},        -- [slot] = { spell = name, mode = "default"|"skip"|template, rank = "Rank 3"|nil, shiftSelf = bool }
     applied = {},      -- [slot] = { id = spellID that was there before }
     macros = {},       -- [macro name] = { id = spellID, body = text }
@@ -91,7 +93,20 @@ function ns.SpellKind(id)
 end
 
 -- every rank of `name` in your spellbook: { { id = , rank = "Rank 1" }, ... } lowest first
+local rankCache = {}
+function ns.ClearRankCache() wipe(rankCache) end
+
+local ScanRanks
 function ns.KnownRanks(name)
+    local list = rankCache[name]
+    if not list then
+        list = ScanRanks(name)
+        rankCache[name] = list
+    end
+    return list
+end
+
+ScanRanks = function(name)
     local list = {}
     local book = C_SpellBook
     local bank = Enum and Enum.SpellBookSpellBank and Enum.SpellBookSpellBank.Player
@@ -195,6 +210,21 @@ function ns.Plan(slot)
         shiftSelf = o and o.shiftSelf or false,
         noToggle = db.noToggle and true or false,
     }
+    -- ranks: does the button hold an older rank than the best one you know?
+    if p.rank then
+        local ranks = ns.KnownRanks(name)
+        local best = ranks[#ranks]
+        if best and best.n > (tonumber(p.rank:match("%d+")) or 0) then
+            p.best, p.outdated = best, true
+        end
+    end
+    p.decided = o and (o.rankDecided or o.rank ~= nil) and true or false
+    -- a macro that already follows the highest rank is up to date, whatever rank it replaced
+    if p.outdated and s.kind == "ours" and p.decided and not p.fixedRank then
+        p.outdated, p.best = nil, nil
+    end
+    p.needsDecision = p.outdated and not p.decided or false
+
     if template ~= "skip" then p.body = ns.Body(p) end
     -- the state the window shows
     if template == "skip" then
@@ -332,12 +362,121 @@ local function Changed()
 end
 ns.Changed = Changed
 
+---------------------------------------------------------------------------
+-- Older ranks on the bars
+---------------------------------------------------------------------------
+local function Say(text) print("|cff66ccffSmartCast:|r " .. text) end
+
+-- remember for this button: keep `rank` (a "Rank 3" text), or nil = always the highest
+local function Decide(slot, name, rank)
+    local o = ns.char.slots[slot]
+    if not o or o.spell ~= name then
+        o = { spell = name }
+        ns.char.slots[slot] = o
+    end
+    o.rankDecided, o.rank = true, rank
+end
+
+-- Buttons already at their highest rank are marked "keep it at the highest", so a rank
+-- learned later counts as an upgrade, not as a question. Older ranks follow the
+-- "older ranks" setting; with "ask" they wait for you. Returns how many still wait.
+function ns.ResolveRanks()
+    if not ns.char then return 0 end
+    local waiting = 0
+    for slot = 1, ns.MAX_SLOT do
+        local p = ns.Plan(slot)
+        if p and p.name and p.rank and not p.decided then
+            if not p.outdated then
+                Decide(slot, p.name, nil)
+            elseif ns.char.oldRank == "max" then
+                Decide(slot, p.name, nil)
+            elseif ns.char.oldRank == "keep" then
+                Decide(slot, p.name, p.rank)
+            else
+                waiting = waiting + 1
+            end
+        end
+    end
+    return waiting
+end
+
+-- the buttons waiting for a decision that it matters for: ones being converted,
+-- and plain spells when they are kept at the highest rank
+local function Waiting()
+    local list = {}
+    for slot = 1, ns.MAX_SLOT do
+        local p = ns.Plan(slot)
+        if p and p.needsDecision and (p.template ~= "skip" or (p.current == "spell" and ns.char.autoUpgrade)) then
+            list[#list + 1] = p
+        end
+    end
+    return list
+end
+ns.WaitingRanks = Waiting
+
+function ns.DecideAll(list, keep)
+    for _, p in ipairs(list) do Decide(p.slot, p.name, keep and p.rank or nil) end
+end
+
+function ns.DecideSlot(slot, keep)
+    local p = ns.Plan(slot)
+    if p and p.name then Decide(slot, p.name, keep and p.rank or nil) end
+    ns.Changed()
+end
+
+-- plain spells on the bars that should follow the highest rank: put the new rank there
+local upgradePending
+function ns.Upgrade(quiet)
+    if not (ns.char and ns.char.autoUpgrade) then return 0 end
+    if InCombatLockdown() then upgradePending = true return 0 end
+    local done, perSpell = 0, {}
+    for slot = 1, ns.MAX_SLOT do
+        local p = ns.Plan(slot)
+        if p and p.current == "spell" and p.outdated and p.decided and not p.fixedRank and p.best then
+            if PutSpell(slot, p.best.id) then
+                done = done + 1
+                local e = perSpell[p.name] or { rank = p.best.rank, count = 0 }
+                e.count = e.count + 1
+                perSpell[p.name] = e
+            end
+        end
+    end
+    if not quiet then
+        for name, e in pairs(perSpell) do
+            Say((L["%s updated to %s on %d buttons."]):format(name, e.rank, e.count))
+        end
+    end
+    return done
+end
+
+StaticPopupDialogs["SMARTCASTFOREVER_OLD_RANKS"] = {
+    text = "SmartCast Forever\n\n%s",
+    button1 = L["Use the highest"],
+    button2 = L["Review"],
+    button3 = L["Keep them"],
+    OnAccept = function(_, list) ns.DecideAll(list, false); ns.Apply() end,
+    OnAlt = function(_, list) ns.DecideAll(list, true); ns.Apply() end,
+    OnCancel = function(_, list)
+        if ns.ShowSlot and list and list[1] then ns.ShowSlot(list[1].slot) end
+    end,
+    timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+}
+
 function ns.Apply()
     if InCombatLockdown() then
         pending = "apply"
         print("|cff66ccffSmartCast:|r " .. L["In combat: it will run when combat ends."])
         return
     end
+    ns.ResolveRanks()
+    local waiting = Waiting()
+    if #waiting > 0 then
+        StaticPopup_Show("SMARTCASTFOREVER_OLD_RANKS",
+            (L["%d buttons hold an older rank than one you know. Use the highest rank, or keep the one they have?"]):format(#waiting),
+            nil, waiting)
+        return
+    end
+    ns.Upgrade()
     local converted, restored, full = 0, 0, 0
     for slot = 1, ns.MAX_SLOT do
         local p = ns.Plan(slot)
@@ -409,6 +548,7 @@ function ns.SetSlot(slot, key, value)
         ns.char.slots[slot] = o
     end
     o[key] = value
+    if key == "rank" then o.rankDecided = true end
     Changed()
 end
 
@@ -419,6 +559,29 @@ local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
 events:RegisterEvent("PLAYER_REGEN_ENABLED")
 events:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+events:RegisterEvent("PLAYER_ENTERING_WORLD")
+events:RegisterEvent("SPELLS_CHANGED")
+pcall(events.RegisterEvent, events, "LEARNED_SPELL_IN_TAB")
+
+-- spells change in bursts (a trainer visit, a login): act once, a moment later
+local spellsQueued
+local function SpellsSettled()
+    spellsQueued = nil
+    ns.ClearRankCache()
+    ns.Upgrade()
+    Changed()
+end
+local resolveQueued
+local function ResolveSettled()
+    resolveQueued = nil
+    ns.ResolveRanks()
+    Changed()
+end
+local function Later(flag, fn, delay)
+    if flag then return true end
+    if C_Timer and C_Timer.After then C_Timer.After(delay, fn) else fn() end
+    return true
+end
 events:SetScript("OnEvent", function(_, event, arg)
     if event == "ADDON_LOADED" and arg == ADDON then
         SmartCastForeverDB = SmartCastForeverDB or {}
@@ -427,11 +590,33 @@ events:SetScript("OnEvent", function(_, event, arg)
         Fill(SmartCastForeverCharDB, DEFAULTS)
         ns.db, ns.char = SmartCastForeverDB, SmartCastForeverCharDB
         if ns.CreateMinimapButton then ns.CreateMinimapButton() end
-    elseif event == "PLAYER_REGEN_ENABLED" and pending then
-        local what = pending
-        pending = nil
-        if what == "apply" then ns.Apply() else ns.Undo() end
-    elseif event == "ACTIONBAR_SLOT_CHANGED" and ns.char then
+    elseif not ns.char then
+        return
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        if pending then
+            local what = pending
+            pending = nil
+            if what == "apply" then ns.Apply() else ns.Undo() end
+        elseif upgradePending then
+            upgradePending = nil
+            ns.Upgrade()
+        end
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        if C_Timer and C_Timer.After then
+            C_Timer.After(3, function()
+                ns.ClearRankCache()
+                local waiting = ns.ResolveRanks()
+                if waiting > 0 and not ns.toldWaiting then
+                    ns.toldWaiting = true
+                    Say((L["%d buttons hold an older rank than one you know. Open /scf to choose."]):format(waiting))
+                end
+                Changed()
+            end)
+        end
+    elseif event == "SPELLS_CHANGED" or event == "LEARNED_SPELL_IN_TAB" then
+        spellsQueued = Later(spellsQueued, SpellsSettled, 1)
+    elseif event == "ACTIONBAR_SLOT_CHANGED" then
+        resolveQueued = Later(resolveQueued, ResolveSettled, 0.5)
         Changed()
     end
 end)
