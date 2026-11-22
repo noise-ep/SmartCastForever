@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- *Enemy, or my friend's target*: with no target at all, the button now does what a plain spell button does (the game's error or its own auto-targeting) instead of nothing. Press Apply once to update your converted buttons.
+- The macro preview in the window wraps instead of being cut short.
+
 ## 0.1.0
 
 First release.

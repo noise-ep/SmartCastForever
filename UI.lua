@@ -324,6 +324,8 @@ local function Build()
     editor.preview:SetPoint("TOPLEFT", 0, -260)
     editor.preview:SetWidth(EDITOR_W)
     editor.preview:SetJustifyV("TOP")
+    -- macro conditions have no spaces: let them wrap anywhere instead of being cut with "..."
+    if editor.preview.SetNonSpaceWrap then editor.preview:SetNonSpaceWrap(true) end
 
     -- footer
     local apply = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")

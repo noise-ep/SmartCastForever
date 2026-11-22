@@ -21,7 +21,9 @@ ns.TEMPLATE_NAMES = {
 
 local function Conditions(template, kind)
     if template == "enemyAssist" then
-        return "[@target,harm,nodead][@targettarget,harm,nodead]"
+        -- the last, empty condition: no match, so it does what a plain button does
+        -- (an error with no target, or the game's own auto-targeting)
+        return "[@target,harm,nodead][@targettarget,harm,nodead][]"
     elseif template == "mouseover" then
         local who = (kind == "helpful" and "help") or (kind == "harmful" and "harm") or "exists"
         return ("[@mouseover,%s,nodead][]"):format(who)
