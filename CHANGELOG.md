@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Spells that need no target (Arcane Explosion, Frost Nova, armors...) count as *Other* and are left alone by the default rules: a targeting macro could stop them from casting. Press Apply once to give them back their plain button.
+
 ## 0.1.1
 
 - *Enemy, or my friend's target*: with no target at all, the button now does what a plain spell button does (the game's error or its own auto-targeting) instead of nothing. Press Apply once to update your converted buttons.

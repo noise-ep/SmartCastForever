@@ -84,7 +84,21 @@ function ns.SpellRank(id)
     if type(text) == "string" and text:find("%d") then return text end
 end
 
+-- how far the spell reaches; 0 for spells that need no target (Arcane Explosion,
+-- Frost Nova, armors), nil when the game doesn't say
+local function MaxRange(id)
+    local info = Try(C_Spell and C_Spell.GetSpellInfo, id)
+    if type(info) == "table" then return info.maxRange end
+    if GetSpellInfo then
+        local ok, _, _, _, _, _, maxRange = pcall(GetSpellInfo, id)
+        if ok then return maxRange end
+    end
+end
+
 function ns.SpellKind(id)
+    -- a spell cast around or on yourself has no target to choose: it counts as
+    -- "other", so the default rules leave it alone
+    if MaxRange(id) == 0 then return "other" end
     if Try(C_Spell and C_Spell.IsSpellHarmful, id) or Try(IsHarmfulSpell, ns.SpellName(id) or id) then
         return "harmful"
     end
