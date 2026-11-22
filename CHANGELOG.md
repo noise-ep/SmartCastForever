@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- New per-button option: *Stop what I'm casting first (wand too)*. Adds `/stopcasting` so the spell goes out at once, cutting a wand shot. It also cuts your own cast, so it's best on instant spells and heals.
+
 ## 0.1.2
 
 - Spells that need no target (Arcane Explosion, Frost Nova, armors...) count as *Other* and are left alone by the default rules: a targeting macro could stop them from casting. Press Apply once to give them back their plain button.

@@ -315,13 +315,25 @@ local function Build()
 
     editor.shift:SetPoint("TOPLEFT", -4, -192)
 
+    editor.stop = Check(ed, L["Stop what I'm casting first (wand too)"],
+        function() local p = selected and ns.Plan(selected); return p and p.stopCasting end,
+        function(v) ns.SetSlot(selected, "stopCasting", v) end)
+    editor.stop:SetPoint("TOPLEFT", -4, -216)
+    editor.stop:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(L["Stop what I'm casting first (wand too)"])
+        GameTooltip:AddLine(L["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."], 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    editor.stop:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
     editor.state = Label(ed, "", "GameFontHighlightSmall")
-    editor.state:SetPoint("TOPLEFT", 0, -222)
+    editor.state:SetPoint("TOPLEFT", 0, -246)
     editor.state:SetWidth(EDITOR_W)
     editor.previewLabel = Label(ed, L["Macro preview"], "GameFontHighlightSmall")
-    editor.previewLabel:SetPoint("TOPLEFT", 0, -244)
+    editor.previewLabel:SetPoint("TOPLEFT", 0, -268)
     editor.preview = Label(ed, "", "GameFontDisableSmall")
-    editor.preview:SetPoint("TOPLEFT", 0, -260)
+    editor.preview:SetPoint("TOPLEFT", 0, -284)
     editor.preview:SetWidth(EDITOR_W)
     editor.preview:SetJustifyV("TOP")
     -- macro conditions have no spaces: let them wrap anywhere instead of being cut with "..."
@@ -348,7 +360,7 @@ local function DrawEditor()
     local p = selected and ns.Plan(selected)
     local show = p and p.name and true or false
     for _, w in ipairs({ editor.icon, editor.name, editor.sub, editor.ruleLabel, editor.rule, editor.state,
-            editor.previewLabel, editor.preview, editor.shift }) do
+            editor.previewLabel, editor.preview, editor.shift, editor.stop }) do
         w:SetShown(show)
     end
     editor.empty:SetShown(not show)
@@ -376,6 +388,8 @@ local function DrawEditor()
     editor.keep:SetText((L["Keep %s"]):format(p.rank or ""))
     editor.shift:Refresh()
     editor.shift:SetShown(p.template ~= "skip" and p.template ~= "self")
+    editor.stop:Refresh()
+    editor.stop:SetShown(p.template ~= "skip")
     local c = COLORS[p.state] or COLORS.skip
     editor.state:SetText(STATE_TEXT[p.state] or "")
     editor.state:SetTextColor(c[1], c[2], c[3])
@@ -404,7 +418,7 @@ function ns.RefreshWindow()
             row:Hide()
         end
     end
-    frame:SetHeight(math.max(178 + shown * ROW_H + 60, 178 + 300 + 60))
+    frame:SetHeight(math.max(178 + shown * ROW_H + 60, 178 + 340 + 60))
 
     DrawEditor()
     local converted, todo = ns.Counts()

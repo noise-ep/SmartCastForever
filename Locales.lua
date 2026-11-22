@@ -8,6 +8,8 @@ ns.L = L
 local T = {}
 
 T.esES = {
+    ["Stop what I'm casting first (wand too)"] = "Cortar lo que esté lanzando (también la varita)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Añade /stopcasting: el hechizo sale al momento y corta el disparo de la varita. También corta tu propio lanzamiento, así que si lo pulsas dos veces vuelve a empezar. Va mejor en hechizos instantáneos y curaciones.",
     ["Enemy, or my friend's target"] = "Enemigo, o el objetivo de mi aliado",
     ["Mouseover, else target"] = "Ratón encima, si no el objetivo",
     ["Friend, else myself"] = "Aliado, si no yo mismo",
@@ -71,6 +73,8 @@ T.esES = {
 T.esMX = T.esES
 
 T.deDE = {
+    ["Stop what I'm casting first (wand too)"] = "Zuerst laufenden Zauber abbrechen (auch Zauberstab)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Fügt /stopcasting hinzu: der Zauber kommt sofort und unterbricht einen Zauberstabschuss. Er bricht auch deinen eigenen Zauber ab, zweimal drücken startet ihn neu. Am besten für Spontanzauber und Heilungen.",
     ["Enemy, or my friend's target"] = "Feind, sonst das Ziel meines Verbündeten",
     ["Mouseover, else target"] = "Mouseover, sonst Ziel",
     ["Friend, else myself"] = "Verbündeter, sonst ich selbst",
@@ -133,6 +137,8 @@ T.deDE = {
 }
 
 T.frFR = {
+    ["Stop what I'm casting first (wand too)"] = "Interrompre d'abord ce que je lance (baguette aussi)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Ajoute /stopcasting : le sort part tout de suite et coupe un tir de baguette. Il coupe aussi votre propre incantation : appuyer deux fois la relance. Idéal pour les sorts instantanés et les soins.",
     ["Enemy, or my friend's target"] = "Ennemi, sinon la cible de mon allié",
     ["Mouseover, else target"] = "Survol, sinon la cible",
     ["Friend, else myself"] = "Allié, sinon moi-même",
@@ -195,6 +201,8 @@ T.frFR = {
 }
 
 T.itIT = {
+    ["Stop what I'm casting first (wand too)"] = "Interrompi prima ciò che sto lanciando (anche la bacchetta)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Aggiunge /stopcasting: l'incantesimo parte subito e interrompe il colpo di bacchetta. Interrompe anche il tuo lancio, quindi premerlo due volte lo fa ripartire. Ideale per incantesimi istantanei e cure.",
     ["Enemy, or my friend's target"] = "Nemico, altrimenti il bersaglio del mio alleato",
     ["Mouseover, else target"] = "Sotto il mouse, altrimenti il bersaglio",
     ["Friend, else myself"] = "Alleato, altrimenti me stesso",
@@ -257,6 +265,8 @@ T.itIT = {
 }
 
 T.ptBR = {
+    ["Stop what I'm casting first (wand too)"] = "Interromper antes o que estou lançando (varinha também)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Adiciona /stopcasting: o feitiço sai na hora e corta o disparo da varinha. Também corta seu próprio lançamento, então apertar duas vezes recomeça o feitiço. Melhor para feitiços instantâneos e curas.",
     ["Enemy, or my friend's target"] = "Inimigo, ou o alvo do meu aliado",
     ["Mouseover, else target"] = "Sob o mouse, ou o alvo",
     ["Friend, else myself"] = "Aliado, ou eu mesmo",
@@ -319,6 +329,8 @@ T.ptBR = {
 }
 
 T.ruRU = {
+    ["Stop what I'm casting first (wand too)"] = "Сначала прервать текущее заклинание (и жезл)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "Добавляет /stopcasting: заклинание срабатывает сразу, прерывая выстрел из жезла. Оно прерывает и ваше собственное заклинание, поэтому двойное нажатие начнёт его заново. Лучше всего для мгновенных заклинаний и исцеления.",
     ["Enemy, or my friend's target"] = "Враг, иначе цель союзника",
     ["Mouseover, else target"] = "Под курсором, иначе цель",
     ["Friend, else myself"] = "Союзник, иначе я сам",
@@ -381,6 +393,8 @@ T.ruRU = {
 }
 
 T.koKR = {
+    ["Stop what I'm casting first (wand too)"] = "먼저 시전 중인 것을 취소 (마법봉 포함)",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "/stopcasting을 추가합니다: 마법봉 사격을 끊고 주문이 바로 시전됩니다. 자신의 시전도 취소하므로 두 번 누르면 다시 시작됩니다. 즉시 시전 주문과 치유에 가장 좋습니다.",
     ["Enemy, or my friend's target"] = "적, 아니면 아군의 대상",
     ["Mouseover, else target"] = "마우스오버, 아니면 대상",
     ["Friend, else myself"] = "아군, 아니면 나 자신",
@@ -443,6 +457,8 @@ T.koKR = {
 }
 
 T.zhCN = {
+    ["Stop what I'm casting first (wand too)"] = "先打断正在施放的法术（包括魔杖）",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "添加 /stopcasting：法术会立即施放并打断魔杖射击。它也会打断你自己的施法，连按两次会重新开始。最适合瞬发法术和治疗。",
     ["Enemy, or my friend's target"] = "敌人，否则为队友的目标",
     ["Mouseover, else target"] = "鼠标悬停，否则为目标",
     ["Friend, else myself"] = "友方，否则为自己",
@@ -505,6 +521,8 @@ T.zhCN = {
 }
 
 T.zhTW = {
+    ["Stop what I'm casting first (wand too)"] = "先打斷正在施放的法術（包括魔杖）",
+    ["Adds /stopcasting: the spell goes out at once, cutting a wand shot. It also cuts your own cast, so pressing it twice restarts the spell. Best on instant spells and heals."] = "加入 /stopcasting：法術會立即施放並打斷魔杖射擊。它也會打斷你自己的施法，連按兩次會重新開始。最適合瞬發法術和治療。",
     ["Enemy, or my friend's target"] = "敵人，否則為隊友的目標",
     ["Mouseover, else target"] = "滑鼠指向，否則為目標",
     ["Friend, else myself"] = "友方，否則為自己",

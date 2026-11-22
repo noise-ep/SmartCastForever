@@ -225,6 +225,7 @@ function ns.Plan(slot)
         rank = ns.SpellRank(id), mode = mode, template = template,
         fixedRank = o and o.rank or nil,
         shiftSelf = o and o.shiftSelf or false,
+        stopCasting = o and o.stopCasting or false,
         noToggle = db.noToggle and true or false,
     }
     -- ranks: does the button hold an older rank than the best one you know?
@@ -261,7 +262,9 @@ function ns.Body(p)
     local spell = p.name .. (p.fixedRank and ("(" .. p.fixedRank .. ")") or "")
     -- the spell named in #showtooltip: the button keeps its icon and tooltip even when
     -- no condition matches (no target yet), instead of a question mark
-    return ("#showtooltip %s\n/cast %s %s%s"):format(spell, cond, p.noToggle and "!" or "", spell)
+    -- /stopcasting first: cuts a wand shot (or anything else being cast) so this spell goes out now
+    local stop = p.stopCasting and "/stopcasting\n" or ""
+    return ("#showtooltip %s\n%s/cast %s %s%s"):format(spell, stop, cond, p.noToggle and "!" or "", spell)
 end
 
 ---------------------------------------------------------------------------
@@ -576,6 +579,8 @@ function ns.SetSlot(slot, key, value)
             d.fixedRank = value
         elseif key == "shiftSelf" then
             d.shiftSelf = value
+        elseif key == "stopCasting" then
+            d.stopCasting = value
         end
         d.body = d.template ~= "skip" and ns.Body(d) or nil
         ns.Changed()
@@ -633,7 +638,7 @@ local function DemoPlan(slot, e, template, state)
         slot = slot, current = state == "converted" and "ours" or "spell",
         id = e.id, name = e.name, kind = kind, icon = ns.SpellIcon(e.id), rank = e.rank,
         mode = "default", template = template, noToggle = ns.char.noToggle and true or false,
-        shiftSelf = false, state = state, decided = true, needsDecision = false,
+        shiftSelf = false, stopCasting = false, state = state, decided = true, needsDecision = false,
     }
     if template ~= (ns.char.defaults[kind] or "skip") then p.mode = template end
     if template ~= "skip" then p.body = ns.Body(p) end
