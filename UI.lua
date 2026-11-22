@@ -193,6 +193,11 @@ local function Build()
         function(v) ns.char.noToggle = v; ns.Changed() end)
     noToggle:SetPoint("TOPLEFT", 12, -96)
     defaultsUI[#defaultsUI + 1] = noToggle
+    local hideNames = Check(frame, L["Hide macro names on the buttons"],
+        function() return ns.db.hideNames end,
+        function(v) ns.db.hideNames = v; if ns.RefreshButtonNames then ns.RefreshButtonNames() end end)
+    hideNames:SetPoint("TOPLEFT", 252, -96)
+    defaultsUI[#defaultsUI + 1] = hideNames
 
     -- the bars
     local barsHead = Label(frame, L["Your bars"])

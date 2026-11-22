@@ -158,6 +158,11 @@ function ns.ReadSlot(slot)
     return { kind = "foreign", actionType = kind }
 end
 
+function ns.IsOurSlot(slot)
+    local s = ns.ReadSlot(slot)
+    return s and s.kind == "ours" or false
+end
+
 -- Everything SmartCast decides about one button
 function ns.Plan(slot)
     local db = ns.char
@@ -318,6 +323,7 @@ local function Redraw()
     redrawQueued = nil
     if ns.RefreshWindow then ns.RefreshWindow() end
     if ns.RefreshMinimap then ns.RefreshMinimap() end
+    if ns.RefreshButtonNames then ns.RefreshButtonNames() end
 end
 local function Changed()
     if redrawQueued then return end
@@ -417,7 +423,7 @@ events:SetScript("OnEvent", function(_, event, arg)
     if event == "ADDON_LOADED" and arg == ADDON then
         SmartCastForeverDB = SmartCastForeverDB or {}
         SmartCastForeverCharDB = SmartCastForeverCharDB or {}
-        Fill(SmartCastForeverDB, { minimapAngle = 200, minimapHidden = false })
+        Fill(SmartCastForeverDB, { minimapAngle = 200, minimapHidden = false, hideNames = true })
         Fill(SmartCastForeverCharDB, DEFAULTS)
         ns.db, ns.char = SmartCastForeverDB, SmartCastForeverCharDB
         if ns.CreateMinimapButton then ns.CreateMinimapButton() end

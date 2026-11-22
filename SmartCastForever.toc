@@ -11,3 +11,4 @@ Locales.lua
 Core.lua
 UI.lua
 Minimap.lua
+ButtonNames.lua
