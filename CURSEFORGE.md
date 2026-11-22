@@ -2,8 +2,6 @@
 
 **Smart targeting for the spells already on your bars. No macro writing, no moving buttons, one click to undo.**
 
-![SmartCast Forever window](https://raw.githubusercontent.com/noise-ep/SmartCastForever/main/media/window.png)
-
 Clicked your tank instead of the mob and your Fireball went nowhere? Hit an enemy when you meant to heal? SmartCast Forever turns the spells on your action bars into smart macros **in the same buttons**, so your keybinds and your layout stay exactly as they are.
 
 ## What it does
@@ -19,8 +17,6 @@ Pick a rule for your spells, press **Apply**, and each button becomes a macro th
 
 Set a **default rule** for harmful, helpful and other spells, then change single buttons from a view of your own bars. Spells that need no target (Arcane Explosion, Frost Nova, armors...) are left alone by default.
 
-![Choosing a rule for Polymorph](https://raw.githubusercontent.com/noise-ep/SmartCastForever/main/media/rule-mouseover.png)
-
 ## Stop casting
 
 Each button can also cut what you are casting, so a heal or an emergency spell goes out at once:
@@ -34,8 +30,6 @@ Each button can also cut what you are casting, so a heal or an emergency spell g
 - **Fixed rank** on any button, for mana-saving downranks.
 - **Older ranks spotted**: buttons holding an older rank than you know are flagged. Use the highest, keep them, or let SmartCast ask you.
 - **Plain spells too**: optionally, spells you didn't convert move up to each new rank you learn.
-
-![A Frostbolt kept at Rank 1](https://raw.githubusercontent.com/noise-ep/SmartCastForever/main/media/fixed-rank.png)
 
 ## Safe by design
 
