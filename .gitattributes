@@ -2,3 +2,4 @@ CURSEFORGE.md export-ignore
 .gitattributes export-ignore
 .github export-ignore
 media export-ignore
+.pkgmeta export-ignore
