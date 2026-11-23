@@ -2,7 +2,7 @@
 
 Turns the spells on your action bars into smart macros, in the same buttons, and back again.
 
-- **Rules per button**: enemy or your friend's target, mouseover else target, friend else yourself, always yourself, or leave it alone.
+- **Rules per button**: enemy or your friend's target (or take it as yours, for wands), mouseover else target, friend else yourself, always yourself, or leave it alone.
 - **Default rules** for harmful, helpful and other spells, so you only set up the exceptions.
 - **Rank**: the highest you know (follows new ranks by itself) or a fixed one.
 - **Extras**: don't cancel a spell that is already active (`!`), Shift to cast it on yourself.

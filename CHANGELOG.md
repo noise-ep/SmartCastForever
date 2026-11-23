@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+- New rule: *Enemy, or take my friend's target*. With a friend selected, their target becomes yours and the spell goes to it. Use it for the wand or Auto Shot: they only keep shooting at your own target, so with the other rule they fire only once.
+
 ## 0.1.4
 
 - "Stop current cast first" is now a choice with three values: *Don't stop*, *Stop channels* (cuts Arcane Missiles, Blizzard... but never the spell itself, so a second press doesn't restart it) and *Stop everything* (cuts anything, a wand shot too). Buttons already set keep cutting everything.

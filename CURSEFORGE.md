@@ -9,6 +9,7 @@ Clicked your tank instead of the mob and your Fireball went nowhere? Hit an enem
 Pick a rule for your spells, press **Apply**, and each button becomes a macro that sends the spell where you mean it:
 
 - **Enemy, or my friend's target**: a friend selected by mistake? The spell goes to whatever they are attacking. With no target at all, the button works like a plain one.
+- **Enemy, or take my friend's target**: the same, but their target becomes yours. Best for the wand or Auto Shot, which only keep shooting at your own target.
 - **Mouseover, else target**: cast without changing your target.
 - **Friend, else myself**: buffs and heals land on you when no friend is selected.
 - **Friend, enemy's target or me**: an enemy selected by mistake? The heal goes to whoever it is hitting.
@@ -67,4 +68,4 @@ If SmartCast saves you some wasted casts, you can [buy me a coffee](https://ko-f
 
 **Objetivos inteligentes para los hechizos que ya tienes en tus barras. Sin escribir macros, sin mover botones y con un clic para deshacer.**
 
-SmartCast Forever convierte los hechizos de tus barras en macros inteligentes **en el mismo botón**, así que tus teclas y tu disposición no cambian. Elige una regla (enemigo o el objetivo de tu aliado, ratón encima, aliado o tú, siempre tú...), pulsa **Aplicar** y listo. Cada botón puede además cortar lo que estés lanzando. Controla los rangos (siempre el más alto o uno fijo), detecta rangos antiguos en tus barras y lo deshaces todo con **Deshacer todo**. Nunca toca tus propias macros. `/scf` abre la ventana.
+SmartCast Forever convierte los hechizos de tus barras en macros inteligentes **en el mismo botón**, así que tus teclas y tu disposición no cambian. Elige una regla (enemigo o el objetivo de tu aliado, coger el objetivo de tu aliado, ratón encima, aliado o tú, siempre tú...), pulsa **Aplicar** y listo. Cada botón puede además cortar lo que estés lanzando. Controla los rangos (siempre el más alto o uno fijo), detecta rangos antiguos en tus barras y lo deshaces todo con **Deshacer todo**. Nunca toca tus propias macros. `/scf` abre la ventana.

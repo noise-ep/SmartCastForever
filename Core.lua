@@ -9,9 +9,10 @@ local QUESTION_ICON = 134400  -- with #showtooltip the button shows the spell's 
 ---------------------------------------------------------------------------
 -- Templates: where the spell goes
 ---------------------------------------------------------------------------
-ns.TEMPLATES = { "enemyAssist", "mouseover", "friendSelf", "friendAssist", "self" }
+ns.TEMPLATES = { "enemyAssist", "enemyTake", "mouseover", "friendSelf", "friendAssist", "self" }
 ns.TEMPLATE_NAMES = {
     enemyAssist = L["Enemy, or my friend's target"],
+    enemyTake = L["Enemy, or take my friend's target"],
     mouseover = L["Mouseover, else target"],
     friendSelf = L["Friend, else myself"],
     friendAssist = L["Friend, enemy's target or me"],
@@ -24,6 +25,9 @@ local function Conditions(template, kind)
         -- the last, empty condition: no match, so it does what a plain button does
         -- (an error with no target, or the game's own auto-targeting)
         return "[@target,harm,nodead][@targettarget,harm,nodead][]"
+    elseif template == "enemyTake" then
+        -- the /assist line in ns.Body has already made the friend's target yours
+        return "[@target,harm,nodead][]"
     elseif template == "mouseover" then
         local who = (kind == "helpful" and "help") or (kind == "harmful" and "harm") or "exists"
         return ("[@mouseover,%s,nodead][]"):format(who)
@@ -268,7 +272,13 @@ function ns.Body(p)
     -- spell, so a spell with a cast time never cuts itself on a second press
     local stop = (p.stopMode == "all" and "/stopcasting\n")
         or (p.stopMode == "channel" and "/stopcasting [channeling]\n") or ""
-    return ("#showtooltip %s\n%s/cast %s %s%s"):format(spell, stop, cond, p.noToggle and "!" or "", spell)
+    -- enemyTake: a friend selected? Their target becomes yours first. A wand or Auto Shot
+    -- only keeps repeating on your own target; this way it keeps shooting.
+    local assist = ""
+    if p.template == "enemyTake" then
+        assist = p.shiftSelf and "/assist [nomod:shift,help,nodead]\n" or "/assist [help,nodead]\n"
+    end
+    return ("#showtooltip %s\n%s%s/cast %s %s%s"):format(spell, stop, assist, cond, p.noToggle and "!" or "", spell)
 end
 
 ---------------------------------------------------------------------------
