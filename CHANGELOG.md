@@ -2,7 +2,8 @@
 
 ## 0.1.5
 
-- New rule: *Enemy, or take my friend's target*. With a friend selected, their target becomes yours and the spell goes to it. Use it for the wand or Auto Shot: they only keep shooting at your own target, so with the other rule they fire only once.
+- New per-button option: *Switch my target*, for the rules that look at someone else's target. That target becomes yours before casting, so the wand and Auto Shot keep shooting instead of firing once. On heals it works the other way round: select the enemy and you switch to whoever it is hitting.
+- Tooltips on every rule and option, with what each one is for.
 
 ## 0.1.4
 

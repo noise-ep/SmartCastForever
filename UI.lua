@@ -51,6 +51,17 @@ local function Fit(fs, maxWidth)
     end
 end
 
+-- a one-line explanation under a title, for the window's buttons and menu entries
+local function Tip(owner, title, text, note)
+    GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
+    GameTooltip:SetText(title or "")
+    if text then GameTooltip:AddLine(text, 1, 1, 1, true) end
+    if note then GameTooltip:AddLine(note, 0.8, 0.8, 0.8, true) end
+    GameTooltip:Show()
+end
+
+-- options(): a list of { value, text, tip }; the tip shows on the menu entry and,
+-- for the current choice, on the button itself. b.note adds a grey line to the button.
 local function Choice(parent, width, options, get, set)
     local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     b:SetSize(width, 22)
@@ -69,7 +80,13 @@ local function Choice(parent, width, options, get, set)
         if MenuUtil and MenuUtil.CreateContextMenu then
             MenuUtil.CreateContextMenu(self, function(_, root)
                 for _, o in ipairs(list) do
-                    root:CreateRadio(o[2], function() return get() == o[1] end, function() set(o[1]) end)
+                    local entry = root:CreateRadio(o[2], function() return get() == o[1] end, function() set(o[1]) end)
+                    if o[3] and entry and entry.SetTooltip then
+                        entry:SetTooltip(function(tooltip)
+                            tooltip:SetText(o[2])
+                            tooltip:AddLine(o[3], 1, 1, 1, true)
+                        end)
+                    end
                 end
             end)
         elseif #list > 0 then
@@ -80,10 +97,17 @@ local function Choice(parent, width, options, get, set)
             set(list[index % #list + 1][1])
         end
     end)
+    b:SetScript("OnEnter", function(self)
+        local current = get()
+        for _, o in ipairs(options()) do
+            if o[1] == current and (o[3] or self.note) then return Tip(self, o[2], o[3], self.note) end
+        end
+    end)
+    b:SetScript("OnLeave", function() GameTooltip:Hide() end)
     return b
 end
 
-local function Check(parent, text, get, set, maxWidth)
+local function Check(parent, text, get, set, maxWidth, tip)
     local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
     cb:SetSize(24, 24)
     cb.label = Label(cb, text, "GameFontHighlightSmall")
@@ -93,14 +117,31 @@ local function Check(parent, text, get, set, maxWidth)
     if cb.text then cb.text:SetText("") end
     cb:SetScript("OnClick", function(self) set(self:GetChecked() and true or false) end)
     function cb:Refresh() self:SetChecked(get() and true or false) end
+    if tip then
+        if cb.SetMotionScriptsWhileDisabled then cb:SetMotionScriptsWhileDisabled(true) end
+        cb:SetScript("OnEnter", function(self) Tip(self, text, tip, self.note) end)
+        cb:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
     return cb
 end
 
+local TEMPLATE_TIPS = {
+    skip = L["Leaves the button as it is."],
+    enemyAssist = L["For damage spells. With a friend selected, it goes to the enemy they are attacking."],
+    mouseover = L["Casts without changing your target. Handy to control a second enemy or to heal from the party frames."],
+    friendSelf = L["For buffs and heals. With no friend selected, it goes on you."],
+    friendAssist = L["For healing. With an enemy selected, it heals whoever it is hitting."],
+    self = L["For shields and buffs you only put on yourself."],
+}
+
 local function TemplateOptions(withDefault, defaultName)
     local list = {}
-    if withDefault then list[#list + 1] = { "default", (L["Default (%s)"]):format(defaultName or "") } end
-    list[#list + 1] = { "skip", ns.TEMPLATE_NAMES.skip }
-    for _, key in ipairs(ns.TEMPLATES) do list[#list + 1] = { key, ns.TEMPLATE_NAMES[key] } end
+    if withDefault then
+        list[#list + 1] = { "default", (L["Default (%s)"]):format(defaultName or ""),
+            L["The rule chosen above for this kind of spell."] }
+    end
+    list[#list + 1] = { "skip", ns.TEMPLATE_NAMES.skip, TEMPLATE_TIPS.skip }
+    for _, key in ipairs(ns.TEMPLATES) do list[#list + 1] = { key, ns.TEMPLATE_NAMES[key], TEMPLATE_TIPS[key] } end
     return list
 end
 
@@ -294,16 +335,18 @@ local function Build()
     editor.rankLabel:SetPoint("TOPLEFT", 0, -94)
     editor.rank = Choice(ed, EDITOR_W,
         function()
-            local list = { { "MAX", L["Highest known"] } }
+            local list = { { "MAX", L["Highest known"],
+                L["Recommended. Always the highest rank you know, also the ones you learn later."] } }
+            local fixed = L["A fixed rank, to save mana with a lower one."]
             local p = selected and ns.Plan(selected)
             if p and p.name then
                 local seen = {}
                 for _, r in ipairs(ns.KnownRanks(p.name)) do
-                    list[#list + 1] = { r.rank, r.rank }
+                    list[#list + 1] = { r.rank, r.rank, fixed }
                     seen[r.rank] = true
                 end
                 -- the rank on the button is always offered, so it can be kept as it is
-                if p.rank and not seen[p.rank] then list[#list + 1] = { p.rank, p.rank } end
+                if p.rank and not seen[p.rank] then list[#list + 1] = { p.rank, p.rank, fixed } end
             end
             return list
         end,
@@ -313,7 +356,12 @@ local function Build()
 
     editor.shift = Check(ed, L["Shift: cast on myself"],
         function() local p = selected and ns.Plan(selected); return p and p.shiftSelf end,
-        function(v) ns.SetSlot(selected, "shiftSelf", v) end, 220)
+        function(v) ns.SetSlot(selected, "shiftSelf", v) end, 220,
+        L["Useful on heals and buffs: hold Shift to cast it on yourself without changing your target."])
+    editor.take = Check(ed, L["Switch my target"],
+        function() local p = selected and ns.Plan(selected); return p and p.takeTarget end,
+        function(v) ns.SetSlot(selected, "takeTarget", v) end, 220,
+        L["Your friend's target (or your enemy's) becomes yours. Recommended for the wand and Auto Shot, which only keep shooting at your own target."])
     editor.rankInfo = Label(ed, "", "GameFontHighlightSmall")
     editor.rankInfo:SetPoint("TOPLEFT", 0, -136)
     editor.rankInfo:SetWidth(EDITOR_W)
@@ -331,33 +379,30 @@ local function Build()
     editor.keep:SetScript("OnClick", function() ns.DecideSlot(selected, true) end)
 
     editor.shift:SetPoint("TOPLEFT", -4, -192)
+    editor.take:SetPoint("TOPLEFT", -4, -214)
 
     editor.stopLabel = Label(ed, L["Stop casting"], "GameFontHighlightSmall")
-    editor.stopLabel:SetPoint("TOPLEFT", 0, -218)
+    editor.stopLabel:SetPoint("TOPLEFT", 0, -240)
     Fit(editor.stopLabel, 106)
     editor.stop = Choice(ed, EDITOR_W - 112, function()
-            return { { "none", L["Don't stop"] }, { "channel", L["Stop channels"] }, { "all", L["Stop everything"] } }
+            return {
+                { "none", L["Don't stop"], L["The usual."] },
+                { "channel", L["Stop channels"], L["Cuts a channeled spell to cast this one, but never cuts itself."] },
+                { "all", L["Stop everything"], L["Recommended on heals and instant spells if you use a wand: cuts the shot to cast this one. Pressing it twice restarts this spell."] },
+            }
         end,
         function() local p = selected and ns.Plan(selected); return p and p.stopMode or "none" end,
         function(v) ns.SetSlot(selected, "stopMode", v) end)
-    editor.stop:SetPoint("TOPRIGHT", ed, "TOPLEFT", EDITOR_W, -213)
-    editor.stop:HookScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["Stop casting"])
-        GameTooltip:AddLine(L["Stop channels: cuts a channeled spell (Arcane Missiles, Blizzard...), never this spell itself."], 1, 1, 1, true)
-        GameTooltip:AddLine(L["Stop everything: cuts anything, a wand shot too. Pressing it twice restarts this spell."], 1, 1, 1, true)
-        GameTooltip:AddLine(L["When it cuts a cast, the new spell may need a second press."], 0.8, 0.8, 0.8, true)
-        GameTooltip:Show()
-    end)
-    editor.stop:HookScript("OnLeave", function() GameTooltip:Hide() end)
+    editor.stop:SetPoint("TOPRIGHT", ed, "TOPLEFT", EDITOR_W, -235)
+    editor.stop.note = L["When it cuts a cast, the new spell may need a second press."]
 
     editor.state = Label(ed, "", "GameFontHighlightSmall")
-    editor.state:SetPoint("TOPLEFT", 0, -250)
+    editor.state:SetPoint("TOPLEFT", 0, -272)
     editor.state:SetWidth(EDITOR_W)
     editor.previewLabel = Label(ed, L["Macro preview"], "GameFontHighlightSmall")
-    editor.previewLabel:SetPoint("TOPLEFT", 0, -272)
+    editor.previewLabel:SetPoint("TOPLEFT", 0, -294)
     editor.preview = Label(ed, "", "GameFontDisableSmall")
-    editor.preview:SetPoint("TOPLEFT", 0, -288)
+    editor.preview:SetPoint("TOPLEFT", 0, -310)
     editor.preview:SetWidth(EDITOR_W)
     editor.preview:SetJustifyV("TOP")
     -- macro conditions have no spaces: let them wrap anywhere instead of being cut with "..."
@@ -384,7 +429,7 @@ local function DrawEditor()
     local p = selected and ns.Plan(selected)
     local show = p and p.name and true or false
     for _, w in ipairs({ editor.icon, editor.name, editor.sub, editor.ruleLabel, editor.rule, editor.state,
-            editor.previewLabel, editor.preview, editor.shift, editor.stop, editor.stopLabel }) do
+            editor.previewLabel, editor.preview, editor.shift, editor.take, editor.stop, editor.stopLabel }) do
         w:SetShown(show)
     end
     editor.empty:SetShown(not show)
@@ -412,6 +457,13 @@ local function DrawEditor()
     editor.keep:SetText((L["Keep %s"]):format(p.rank or ""))
     editor.shift:Refresh()
     editor.shift:SetShown(p.template ~= "skip" and p.template ~= "self")
+    editor.take:Refresh()
+    editor.take:SetShown(p.template ~= "skip" and p.template ~= "self")
+    -- only the rules that look at someone else's target can make it yours
+    local canTake = ns.TAKE_TARGET[p.template] and true or false
+    editor.take:SetEnabled(canTake)
+    if canTake then editor.take.label:SetTextColor(1, 1, 1) else editor.take.label:SetTextColor(0.5, 0.5, 0.5) end
+    editor.take.note = not canTake and L["Only with the rules that look at someone else's target."] or nil
     editor.stop:Refresh()
     editor.stop:SetShown(p.template ~= "skip")
     editor.stopLabel:SetShown(p.template ~= "skip")

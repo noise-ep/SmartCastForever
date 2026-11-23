@@ -9,7 +9,6 @@ Clicked your tank instead of the mob and your Fireball went nowhere? Hit an enem
 Pick a rule for your spells, press **Apply**, and each button becomes a macro that sends the spell where you mean it:
 
 - **Enemy, or my friend's target**: a friend selected by mistake? The spell goes to whatever they are attacking. With no target at all, the button works like a plain one.
-- **Enemy, or take my friend's target**: the same, but their target becomes yours. Best for the wand or Auto Shot, which only keep shooting at your own target.
 - **Mouseover, else target**: cast without changing your target.
 - **Friend, else myself**: buffs and heals land on you when no friend is selected.
 - **Friend, enemy's target or me**: an enemy selected by mistake? The heal goes to whoever it is hitting.
@@ -24,6 +23,17 @@ Each button can also cut what you are casting, so a heal or an emergency spell g
 
 - **Stop channels**: cuts a channeled spell (Arcane Missiles, Blizzard...), never the spell itself.
 - **Stop everything**: cuts anything, a wand shot too. Pressing it twice restarts the spell, so it's best on instant spells and heals.
+
+## Switch my target
+
+With the two rules that look at someone else's target, a button can **make that target yours** instead of only casting at it. Needed for the wand and Auto Shot: they only keep shooting at your own target, so without it they fire once.
+
+## Recipes
+
+- **Priest with a wand**: the wand on *Enemy, or my friend's target* with *Switch my target*; heals on *Friend, enemy's target or me* with *Switch my target* and *Stop everything*. Select the tank and press the wand: you shoot what the tank is fighting. Press a heal: it cuts the wand and heals whoever that enemy is hitting. Press the wand again and you are back on the enemy.
+- **Mage with Polymorph**: damage spells on the default rule, Polymorph on *Mouseover, else target*. Sheep a second enemy by pointing at it, without losing your target.
+
+Every option in the window has a tooltip with what it is for.
 
 ## Ranks, handled
 
@@ -68,4 +78,4 @@ If SmartCast saves you some wasted casts, you can [buy me a coffee](https://ko-f
 
 **Objetivos inteligentes para los hechizos que ya tienes en tus barras. Sin escribir macros, sin mover botones y con un clic para deshacer.**
 
-SmartCast Forever convierte los hechizos de tus barras en macros inteligentes **en el mismo botón**, así que tus teclas y tu disposición no cambian. Elige una regla (enemigo o el objetivo de tu aliado, coger el objetivo de tu aliado, ratón encima, aliado o tú, siempre tú...), pulsa **Aplicar** y listo. Cada botón puede además cortar lo que estés lanzando. Controla los rangos (siempre el más alto o uno fijo), detecta rangos antiguos en tus barras y lo deshaces todo con **Deshacer todo**. Nunca toca tus propias macros. `/scf` abre la ventana.
+SmartCast Forever convierte los hechizos de tus barras en macros inteligentes **en el mismo botón**, así que tus teclas y tu disposición no cambian. Elige una regla (enemigo o el objetivo de tu aliado, ratón encima, aliado o tú, siempre tú...), pulsa **Aplicar** y listo. Cada botón puede además cortar lo que estés lanzando o cambiarte el objetivo, para que la varita siga disparando. Controla los rangos (siempre el más alto o uno fijo), detecta rangos antiguos en tus barras y lo deshaces todo con **Deshacer todo**. Nunca toca tus propias macros. `/scf` abre la ventana.

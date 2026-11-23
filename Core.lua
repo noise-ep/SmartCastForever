@@ -9,10 +9,9 @@ local QUESTION_ICON = 134400  -- with #showtooltip the button shows the spell's 
 ---------------------------------------------------------------------------
 -- Templates: where the spell goes
 ---------------------------------------------------------------------------
-ns.TEMPLATES = { "enemyAssist", "enemyTake", "mouseover", "friendSelf", "friendAssist", "self" }
+ns.TEMPLATES = { "enemyAssist", "mouseover", "friendSelf", "friendAssist", "self" }
 ns.TEMPLATE_NAMES = {
     enemyAssist = L["Enemy, or my friend's target"],
-    enemyTake = L["Enemy, or take my friend's target"],
     mouseover = L["Mouseover, else target"],
     friendSelf = L["Friend, else myself"],
     friendAssist = L["Friend, enemy's target or me"],
@@ -20,14 +19,14 @@ ns.TEMPLATE_NAMES = {
     skip = L["Don't touch"],
 }
 
+-- the rules that look at someone else's target can make it yours instead ("Switch my target")
+ns.TAKE_TARGET = { enemyAssist = true, friendAssist = true }
+
 local function Conditions(template, kind)
     if template == "enemyAssist" then
         -- the last, empty condition: no match, so it does what a plain button does
         -- (an error with no target, or the game's own auto-targeting)
         return "[@target,harm,nodead][@targettarget,harm,nodead][]"
-    elseif template == "enemyTake" then
-        -- the /assist line in ns.Body has already made the friend's target yours
-        return "[@target,harm,nodead][]"
     elseif template == "mouseover" then
         local who = (kind == "helpful" and "help") or (kind == "harmful" and "harm") or "exists"
         return ("[@mouseover,%s,nodead][]"):format(who)
@@ -221,6 +220,8 @@ function ns.Plan(slot)
     local o = db.slots[slot]
     if o and o.spell ~= name then o = nil end   -- another spell is there now: its old choice doesn't apply
 
+    -- 0.1.5 test builds had "take the target" as a rule of its own
+    if o and o.mode == "enemyTake" then o.mode, o.takeTarget = "enemyAssist", true end
     local mode = o and o.mode or "default"
     local template = mode == "default" and (db.defaults[kind] or "skip") or mode
     local p = {
@@ -229,6 +230,7 @@ function ns.Plan(slot)
         rank = ns.SpellRank(id), mode = mode, template = template,
         fixedRank = o and o.rank or nil,
         shiftSelf = o and o.shiftSelf or false,
+        takeTarget = o and o.takeTarget or false,
         -- "none" | "channel" | "all"; older settings saved a plain true for "all"
         stopMode = o and (o.stopMode or (o.stopCasting and "all")) or "none",
         noToggle = db.noToggle and true or false,
@@ -263,21 +265,28 @@ end
 
 function ns.Body(p)
     local cond = Conditions(p.template, p.kind)
+    -- "Switch my target": /assist first makes the friend's target (or the enemy's) yours,
+    -- then the spell goes to your target. A wand or Auto Shot only keeps shooting at
+    -- your own target, so with this it keeps shooting.
+    local assist = ""
+    if p.takeTarget and ns.TAKE_TARGET[p.template] then
+        local mod = p.shiftSelf and "nomod:shift," or ""
+        if p.template == "enemyAssist" then
+            assist = ("/assist [%shelp,nodead]\n"):format(mod)
+            cond = "[@target,harm,nodead][]"
+        else
+            assist = ("/assist [%sharm,nodead]\n"):format(mod)
+            cond = "[@target,help,nodead][@player]"
+        end
+    end
     if p.shiftSelf and p.template ~= "self" then cond = "[mod:shift,@player]" .. cond end
     local spell = p.name .. (p.fixedRank and ("(" .. p.fixedRank .. ")") or "")
     -- the spell named in #showtooltip: the button keeps its icon and tooltip even when
     -- no condition matches (no target yet), instead of a question mark
-    -- /stopcasting first: cuts a wand shot (or anything else being cast) so this spell goes out now
     -- "all": cuts anything being cast (a wand shot too); "channel": only a channeled
     -- spell, so a spell with a cast time never cuts itself on a second press
     local stop = (p.stopMode == "all" and "/stopcasting\n")
         or (p.stopMode == "channel" and "/stopcasting [channeling]\n") or ""
-    -- enemyTake: a friend selected? Their target becomes yours first. A wand or Auto Shot
-    -- only keeps repeating on your own target; this way it keeps shooting.
-    local assist = ""
-    if p.template == "enemyTake" then
-        assist = p.shiftSelf and "/assist [nomod:shift,help,nodead]\n" or "/assist [help,nodead]\n"
-    end
     return ("#showtooltip %s\n%s%s/cast %s %s%s"):format(spell, stop, assist, cond, p.noToggle and "!" or "", spell)
 end
 
@@ -595,6 +604,8 @@ function ns.SetSlot(slot, key, value)
             d.shiftSelf = value
         elseif key == "stopMode" then
             d.stopMode = value
+        elseif key == "takeTarget" then
+            d.takeTarget = value
         end
         d.body = d.template ~= "skip" and ns.Body(d) or nil
         ns.Changed()
