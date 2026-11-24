@@ -9,4 +9,3 @@ ignore:
   - media
   - .github
   - .gitattributes
-  - RELEASE_NOTES.md
