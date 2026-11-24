@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+- Fixed: moving a converted button by hand no longer confuses SmartCast. Its spell and its settings now follow the button to its new place, so *Apply* and *Undo all* no longer put the old macro back where the button used to be.
+
 ## 0.1.5
 
 - New per-button option: *Switch my target*, for the rules that look at someone else's target. That target becomes yours before casting, so the wand and Auto Shot keep shooting instead of firing once. On heals it works the other way round: select the enemy and you switch to whoever it is hitting.

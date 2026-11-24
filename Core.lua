@@ -50,7 +50,7 @@ local DEFAULTS = {
     oldRank = "ask",   -- a button with an older rank than you know: "ask" | "max" | "keep"
     autoUpgrade = true, -- plain spells on the bars follow the highest rank you learn
     slots = {},        -- [slot] = { spell = name, mode = "default"|"skip"|template, rank = "Rank 3"|nil, shiftSelf = bool }
-    applied = {},      -- [slot] = { id = spellID that was there before }
+    applied = {},      -- [slot] = { id = spellID that was there before, macro = the SmartCast macro put there }
     macros = {},       -- [macro name] = { id = spellID, body = text }
 }
 
@@ -210,6 +210,8 @@ function ns.Plan(slot)
         id = s.id
     else
         local applied, macro = db.applied[slot], db.macros[s.name]
+        -- a note left by a button that was moved away doesn't belong to this one
+        if applied and applied.macro and applied.macro ~= s.name then applied = nil end
         id = (applied and applied.id) or (macro and macro.id)
     end
     if not id then return { slot = slot, current = "foreign" } end
@@ -386,6 +388,97 @@ local function Cleanup()
 end
 
 ---------------------------------------------------------------------------
+-- Buttons moved by hand: SmartCast's notes (the spell a button held, its
+-- settings) follow the button to its new place instead of staying behind
+---------------------------------------------------------------------------
+local function SpellOnSlot(slot, s)
+    if not s then return nil end
+    if s.kind == "spell" then return ns.SpellName(s.id) end
+    if s.kind == "ours" then
+        local a, m = ns.char.applied[slot], ns.char.macros[s.name]
+        local id = (a and a.id) or (m and m.id)
+        return id and ns.SpellName(id)
+    end
+end
+
+local function MacroSpell(name)
+    local m = ns.char.macros[name]
+    return m and m.id and ns.SpellName(m.id)
+end
+
+function ns.Reconcile()
+    local db = ns.char
+    if not db or ns.demoMode then return end
+    local here = {}
+    for slot = 1, ns.MAX_SLOT do here[slot] = ns.ReadSlot(slot) end
+
+    -- notes of converted buttons: still in place, or left behind by a move?
+    local lost, movedFrom = {}, {}
+    for slot, a in pairs(db.applied) do
+        local s = here[slot]
+        local name = s and s.kind == "ours" and s.name
+        if name and (a.macro == name or (not a.macro and ns.SpellName(a.id) == MacroSpell(name))) then
+            a.macro = name
+        else
+            lost[#lost + 1] = { from = slot, a = a }
+            db.applied[slot] = nil
+        end
+    end
+    for slot, s in pairs(here) do
+        if s.kind == "ours" and not db.applied[slot] then
+            -- the same macro first, else one for the same spell
+            local pick
+            for i, o in ipairs(lost) do
+                if o.a.macro == s.name then pick = i break end
+            end
+            if not pick then
+                local spell = MacroSpell(s.name)
+                for i, o in ipairs(lost) do
+                    if spell and ns.SpellName(o.a.id) == spell then pick = i break end
+                end
+            end
+            if pick then
+                local o = table.remove(lost, pick)
+                o.a.macro = s.name
+                db.applied[slot], movedFrom[slot] = o.a, o.from
+            else
+                local m = db.macros[s.name]
+                if m and m.id then db.applied[slot] = { id = m.id, macro = s.name } end
+            end
+        end
+    end
+
+    -- per-button settings: the same, matched by spell
+    local spare = {}
+    for slot, o in pairs(db.slots) do
+        if SpellOnSlot(slot, here[slot]) ~= o.spell then spare[slot] = o end
+    end
+    local moves = {}
+    for slot, s in pairs(here) do
+        local spell = SpellOnSlot(slot, s)
+        local o = db.slots[slot]
+        if spell and not (o and o.spell == spell) then
+            local from = movedFrom[slot]
+            if not (from and spare[from] and spare[from].spell == spell) then
+                from = nil
+                for k, so in pairs(spare) do
+                    if so.spell == spell then from = k break end
+                end
+            end
+            if from then
+                moves[#moves + 1] = { from = from, to = slot, o = spare[from] }
+                spare[from] = nil
+            end
+        end
+    end
+    -- two buttons swapped: take every moved setting out before putting any back
+    for _, m in ipairs(moves) do
+        if db.slots[m.from] == m.o then db.slots[m.from] = nil end
+    end
+    for _, m in ipairs(moves) do db.slots[m.to] = m.o end
+end
+
+---------------------------------------------------------------------------
 -- Apply / undo
 ---------------------------------------------------------------------------
 local pending
@@ -518,6 +611,7 @@ function ns.Apply()
         print("|cff66ccffSmartCast:|r " .. L["In combat: it will run when combat ends."])
         return
     end
+    ns.Reconcile()
     ns.ResolveRanks()
     local waiting = Waiting()
     if #waiting > 0 then
@@ -539,7 +633,7 @@ function ns.Apply()
             elseif p.state ~= "converted" then
                 local name = EnsureMacro(p)
                 if name and PutMacro(slot, name) then
-                    ns.char.applied[slot] = { id = p.id }
+                    ns.char.applied[slot] = { id = p.id, macro = name }
                     converted = converted + 1
                 elseif not name then
                     full = full + 1
@@ -562,6 +656,7 @@ function ns.Undo()
         print("|cff66ccffSmartCast:|r " .. L["In combat: it will run when combat ends."])
         return
     end
+    ns.Reconcile()
     local count = 0
     for slot = 1, ns.MAX_SLOT do
         local s = ns.ReadSlot(slot)
@@ -748,7 +843,13 @@ local function SpellsSettled()
 end
 local resolveQueued
 local function ResolveSettled()
+    -- a button still being dragged: wait until it lands
+    if GetCursorInfo() and C_Timer and C_Timer.After then
+        C_Timer.After(0.5, ResolveSettled)
+        return
+    end
     resolveQueued = nil
+    ns.Reconcile()
     ns.ResolveRanks()
     Changed()
 end
