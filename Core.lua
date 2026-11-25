@@ -406,7 +406,7 @@ local function MacroSpell(name)
     return m and m.id and ns.SpellName(m.id)
 end
 
-function ns.Reconcile()
+local function Reconcile()
     local db = ns.char
     if not db or ns.demoMode then return end
     local here = {}
@@ -476,6 +476,16 @@ function ns.Reconcile()
         if db.slots[m.from] == m.o then db.slots[m.from] = nil end
     end
     for _, m in ipairs(moves) do db.slots[m.to] = m.o end
+end
+
+-- a mistake here must never stop Apply, Undo or the bars from working: report it once
+local reconcileWarned
+function ns.Reconcile()
+    local ok, err = pcall(Reconcile)
+    if not ok and not reconcileWarned then
+        reconcileWarned = true
+        print("|cff66ccffSmartCast:|r error while following moved buttons, please report it: " .. tostring(err))
+    end
 end
 
 ---------------------------------------------------------------------------
